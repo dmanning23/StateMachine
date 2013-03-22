@@ -48,12 +48,12 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// list of the state names
 		/// </summary>
-		string [] m_listStateNames;
+		string[] m_listStateNames;
 
 		/// <summary>
 		/// list of the message names
 		/// </summary>
-		string [] m_listMessageNames;
+		string[] m_listMessageNames;
 
 		/// <summary>
 		/// All the state transitions for each state
@@ -117,6 +117,9 @@ namespace StateMachineBuddy
 
 		#region Methods
 
+		/// <summary>
+		/// constructor
+		/// </summary>
 		public StateMachine()
 		{
 			m_iInitialState = 0;
@@ -268,6 +271,11 @@ namespace StateMachineBuddy
 			return -1;
 		}
 
+		/// <summary>
+		/// Get the index of a message from the message name
+		/// </summary>
+		/// <param name="strText">name of teh message to get the id for</param>
+		/// <returns>if of the message</returns>
 		public int GetMessageIndexFromText(string strText)
 		{
 			Debug.Assert(null != m_listMessageNames);
@@ -289,15 +297,11 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// This function sets the thing to its initial state.
 		/// </summary>
-		public void ResetToInitialState() 
+		public void ResetToInitialState()
 		{
 			m_iPrevState = m_iInitialState;
-			m_iCurrentState = m_iInitialState; 
+			m_iCurrentState = m_iInitialState;
 		}
-
-		#endregion //Methods
-
-		#region Tool Methods
 
 		/// <summary>
 		/// Resize the state machine, removing and appending from the end
@@ -360,6 +364,12 @@ namespace StateMachineBuddy
 			ResetToInitialState();
 		}
 
+		/// <summary>
+		/// Get a state transition
+		/// </summary>
+		/// <param name="iState">the beginning state</param>
+		/// <param name="iMessage">the message to send to that state</param>
+		/// <returns>int: the id of the target state when the specified message is sent to the specified state</returns>
 		public int GetEntry(int iState, int iMessage)
 		{
 			Debug.Assert(null != m_Data);
@@ -375,6 +385,11 @@ namespace StateMachineBuddy
 			return m_Data[iState, iAdjustedMessage];
 		}
 
+		/// <summary>
+		/// Get the name of a state
+		/// </summary>
+		/// <param name="iState">teh id of the state to get the name of</param>
+		/// <returns>get a state name </returns>
 		public string GetStateName(int iState)
 		{
 			Debug.Assert(iState >= 0);
@@ -384,6 +399,11 @@ namespace StateMachineBuddy
 			return m_listStateNames[iState];
 		}
 
+		/// <summary>
+		/// Get the name of a message
+		/// </summary>
+		/// <param name="iMessage">the id of a message to get the name of</param>
+		/// <returns>given a message id, get the message name</returns>
 		public string GetMessageName(int iMessage)
 		{
 			Debug.Assert(null != m_listMessageNames);
@@ -397,6 +417,11 @@ namespace StateMachineBuddy
 			return m_listMessageNames[iAdjustedMessage];
 		}
 
+		/// <summary>
+		/// change the name of a state
+		/// </summary>
+		/// <param name="iState">the state to change</param>
+		/// <param name="strStateName">the name to change the state to</param>
 		public void SetStateName(int iState, string strStateName)
 		{
 			Debug.Assert(iState >= 0);
@@ -406,6 +431,11 @@ namespace StateMachineBuddy
 			m_listStateNames[iState] = strStateName;
 		}
 
+		/// <summary>
+		/// change the name of a message
+		/// </summary>
+		/// <param name="iMessage">id of the message to change the name of</param>
+		/// <param name="strMessageName">the name to change the message to</param>
 		public void SetMessageName(int iMessage, string strMessageName)
 		{
 			Debug.Assert(null != m_listMessageNames);
@@ -438,10 +468,10 @@ namespace StateMachineBuddy
 			}
 
 			//set up a temp array for state data
-			int [,] pData = new int [(m_iNumStates - 1), m_iNumMessages];
+			int[,] pData = new int[(m_iNumStates - 1), m_iNumMessages];
 
 			//set up temp array for state tags
-			string [] pTempStrings = new string[(m_iNumStates - 1)];
+			string[] pTempStrings = new string[(m_iNumStates - 1)];
 
 			//copy all the data into the new array, except for the state to delete
 			int iCurState = 0;
@@ -452,7 +482,15 @@ namespace StateMachineBuddy
 					//copy the messages
 					for (int j = 0; j < m_iNumMessages; j++)
 					{
-						pData[iCurState, j] = m_Data[i, j];
+						//if the state transition goes to the target state, reset it
+						if (iState == m_Data[i, j])
+						{
+							pData[iCurState, j] = iCurState;
+						}
+						else
+						{
+							pData[iCurState, j] = m_Data[i, j];
+						}
 					}
 
 					//copy teh state name
@@ -496,10 +534,10 @@ namespace StateMachineBuddy
 			}
 
 			//set up a temp array for state data
-			int [,] pData = new int[m_iNumStates, (m_iNumMessages - 1)];
+			int[,] pData = new int[m_iNumStates, (m_iNumMessages - 1)];
 
 			//set up temp array for message names
-			string [] pTempStrings = new string[(m_iNumMessages - 1)];
+			string[] pTempStrings = new string[(m_iNumMessages - 1)];
 
 			//copy all the data into the new array, except for the message to delete
 			for (int i = 0; i < m_iNumStates; i++)
@@ -524,6 +562,12 @@ namespace StateMachineBuddy
 			m_iNumMessages--;
 		}
 
+		/// <summary>
+		/// check if this is the same as another state machine
+		/// todo: isn't this doing it wrong?  override isequals or whatever
+		/// </summary>
+		/// <param name="rInst">thing to compare to</param>
+		/// <returns>whether not the same thing</returns>
 		public bool Compare(StateMachine rInst)
 		{
 			//compare two state machines
@@ -564,7 +608,7 @@ namespace StateMachineBuddy
 			return true;
 		}
 
-		#endregion //Tool Methods
+		#endregion //Methods
 
 		#region Networking
 
@@ -575,6 +619,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		public virtual void ReadFromNetwork(PacketReader packetReader, IStateContainer rStateContainer)
 		{
+			//Read the current state and force a state change event if required
 			if (ForceState(packetReader.ReadInt32()))
 			{
 				rStateContainer.StateChange(CurrentState);
@@ -586,6 +631,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		public virtual void WriteToNetwork(PacketWriter packetWriter)
 		{
+			//the only thing that needs to be synced is the current state!!!
 			packetWriter.Write(m_iCurrentState);
 		}
 
@@ -1100,6 +1146,14 @@ namespace StateMachineBuddy
 
 #endif
 
+		/// <summary>
+		/// Load this dude from an xml file.  
+		/// This removes all the existing data and loads ALL the data into the state machine!
+		/// </summary>
+		/// <param name="rContent">the content opbject to load from</param>
+		/// <param name="strResource">name of the resource to load from</param>
+		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
+		/// <returns>whether or not any errors ocurred</returns>
 		public bool ReadSerializedFile(ContentManager rContent, string strResource, int iMessageOffset)
 		{
 			//read in serialized xna state machine
@@ -1134,6 +1188,14 @@ namespace StateMachineBuddy
 			return true;
 		}
 
+		/// <summary>
+		/// Take a state machine file and insert the data into thisd dude
+		/// This keeps all the existing data and adds/appends the file data into the state machine
+		/// </summary>
+		/// <param name="rContent">the content opbject to load from</param>
+		/// <param name="strResource">name of the resource to load from</param>
+		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
+		/// <returns>whether or not any errors ocurred</returns>
 		public bool AppendSerializedFile(ContentManager rContent, string strResource, int iMessageOffset)
 		{
 			m_iMessageOffset = iMessageOffset;
@@ -1158,6 +1220,12 @@ namespace StateMachineBuddy
 			return true;
 		}
 
+		/// <summary>
+		/// read in the state names form a file
+		/// This tries to append new data into the state machine
+		/// </summary>
+		/// <param name="listStateNames">list of state names</param>
+		/// <param name="listMessageNames">list of message names</param>
 		private void ReadNames(List<string> listStateNames, List<string> listMessageNames)
 		{
 			//grab the current number of states & messages
@@ -1225,6 +1293,11 @@ namespace StateMachineBuddy
 			}
 		}
 
+		/// <summary>
+		/// Read a table of state data into this state machine
+		/// </summary>
+		/// <param name="listStates">a list of all teh state change objects</param>
+		/// <returns>whether or not an error occurred reading in the data</returns>
 		private bool ReadStateTable(List<SPFSettings.StateTableXML> listStates)
 		{
 			for (int i = 0; i < listStates.Count; i++)
