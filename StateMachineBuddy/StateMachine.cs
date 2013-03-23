@@ -18,7 +18,12 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// Event raised when current state changes
 		/// </summary>
-		public event EventHandler<StateChangeEventArgs> StateChanged;
+		public event EventHandler<StateChangeEventArgs> StateChangedEvent;
+
+		/// <summary>
+		/// Event that is raised when the state machine is reset to the initial state
+		/// </summary>
+		public event EventHandler<StateChangeEventArgs> ResetEvent;
 
 		/// <summary>
 		/// The state this machine starts in
@@ -144,9 +149,9 @@ namespace StateMachineBuddy
 		/// </summary>
 		protected internal virtual void OnStateChange(int iOldState, int iNewState)
 		{
-			if (StateChanged != null)
+			if (StateChangedEvent != null)
 			{
-				StateChanged(this, new StateChangeEventArgs(iOldState, iNewState));
+				StateChangedEvent(this, new StateChangeEventArgs(iOldState, iNewState));
 			}
 		}
 
@@ -211,8 +216,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="iMessage">message to send to the state machine, 
 		/// should be offset by the message offset of this dude</param>
-		/// <returns>bool: did it change states?</returns>
-		public virtual bool SendStateMessage(int iMessage)
+		public virtual void SendStateMessage(int iMessage)
 		{
 			Debug.Assert(null != m_Data);
 
@@ -236,12 +240,6 @@ namespace StateMachineBuddy
 
 				//fire off a message
 				OnStateChange(m_iPrevState, m_iCurrentState);
-
-				return true;
-			}
-			else
-			{
-				return false;
 			}
 		}
 
@@ -249,8 +247,7 @@ namespace StateMachineBuddy
 		/// Method to force the state machine to a certain state
 		/// </summary>
 		/// <param name="iState">state to set machine to</param>
-		/// <returns>bool: whether or not the state changed</returns>
-		public bool ForceState(int iState)
+		public void ForceState(int iState)
 		{
 			Debug.Assert(iState >= 0);
 			Debug.Assert(iState < m_iNumStates);
@@ -266,12 +263,6 @@ namespace StateMachineBuddy
 
 				//fire off a message
 				OnStateChange(m_iPrevState, m_iCurrentState);
-
-				return true;
-			}
-			else
-			{
-				return false;
 			}
 		}
 
@@ -327,7 +318,11 @@ namespace StateMachineBuddy
 			m_iPrevState = m_iInitialState;
 			m_iCurrentState = m_iInitialState;
 
-			OnStateChange(m_iPrevState, m_iCurrentState);
+			//Send the reset event instread of the state change event
+			if (ResetEvent != null)
+			{
+				ResetEvent(this, new StateChangeEventArgs(m_iPrevState, m_iCurrentState));
+			}
 		}
 
 		/// <summary>
