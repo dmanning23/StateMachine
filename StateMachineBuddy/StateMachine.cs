@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
+using System;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Net;
 
@@ -13,6 +14,11 @@ namespace StateMachineBuddy
 	public class StateMachine
 	{
 		#region Members
+
+		/// <summary>
+		/// Event raised when current state changes
+		/// </summary>
+		public event EventHandler<StateChangeEventArgs> StateChanged;
 
 		/// <summary>
 		/// The state this machine starts in
@@ -134,6 +140,17 @@ namespace StateMachineBuddy
 		}
 
 		/// <summary>
+		/// Method for raising the state change event.
+		/// </summary>
+		protected internal virtual void OnStateChange(int iOldState, int iNewState)
+		{
+			if (StateChanged != null)
+			{
+				StateChanged(this, new StateChangeEventArgs(iOldState, iNewState));
+			}
+		}
+
+		/// <summary>
 		/// Set all the stuff of the state machine
 		/// </summary>
 		/// <param name="iNumStates">number of states to put in the state machine</param>
@@ -216,6 +233,10 @@ namespace StateMachineBuddy
 			{
 				//set the previous state
 				m_iPrevState = iCurrentState;
+
+				//fire off a message
+				OnStateChange(m_iPrevState, m_iCurrentState);
+
 				return true;
 			}
 			else
@@ -242,6 +263,10 @@ namespace StateMachineBuddy
 			{
 				//set the previous state
 				m_iPrevState = iCurrentState;
+
+				//fire off a message
+				OnStateChange(m_iPrevState, m_iCurrentState);
+
 				return true;
 			}
 			else
@@ -301,6 +326,8 @@ namespace StateMachineBuddy
 		{
 			m_iPrevState = m_iInitialState;
 			m_iCurrentState = m_iInitialState;
+
+			OnStateChange(m_iPrevState, m_iCurrentState);
 		}
 
 		/// <summary>
@@ -617,13 +644,10 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// Read this object from a network packet reader.
 		/// </summary>
-		public virtual void ReadFromNetwork(PacketReader packetReader, IStateContainer rStateContainer)
+		public virtual void ReadFromNetwork(PacketReader packetReader)
 		{
 			//Read the current state and force a state change event if required
-			if (ForceState(packetReader.ReadInt32()))
-			{
-				rStateContainer.StateChange(CurrentState);
-			}
+			ForceState(packetReader.ReadInt32());
 		}
 
 		/// <summary>
@@ -1201,7 +1225,7 @@ namespace StateMachineBuddy
 			m_iMessageOffset = iMessageOffset;
 
 			//read in serialized xna state machine
-			SPFSettings.StateMachineXML myXML = rContent.Load<SPFSettings.StateMachineXML>(strResource);
+			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource);
 
 			//read in and append all the state & message names
 			ReadNames(myXML.stateNames, myXML.messageNames);
@@ -1298,7 +1322,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="listStates">a list of all teh state change objects</param>
 		/// <returns>whether or not an error occurred reading in the data</returns>
-		private bool ReadStateTable(List<SPFSettings.StateTableXML> listStates)
+		private bool ReadStateTable(List<StateTableXML> listStates)
 		{
 			for (int i = 0; i < listStates.Count; i++)
 			{

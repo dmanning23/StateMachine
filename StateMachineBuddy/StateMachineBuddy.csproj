@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateChangeEventArgs.cs" />
     <Compile Include="StateMachine.cs" />
     <Compile Include="StateMachineXML.cs" />
   </ItemGroup>
