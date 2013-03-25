@@ -383,7 +383,6 @@ namespace StateMachineBuddy
 			m_Data = pData;
 			m_iNumStates = iNumStates;
 			m_iNumMessages = iNumMessages;
-			ResetToInitialState();
 		}
 
 		/// <summary>
