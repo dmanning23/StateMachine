@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.Windows", "StateMachineBuddy.Windows.csproj", "{CD66EEB4-8381-41A8-ABED-372DC31646AC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD66EEB4-8381-41A8-ABED-372DC31646AC}.Debug|x86.ActiveCfg = Debug|x86
+		{CD66EEB4-8381-41A8-ABED-372DC31646AC}.Debug|x86.Build.0 = Debug|x86
+		{CD66EEB4-8381-41A8-ABED-372DC31646AC}.Release|x86.ActiveCfg = Release|x86
+		{CD66EEB4-8381-41A8-ABED-372DC31646AC}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = StateMachineBuddy.Windows.csproj
+	EndGlobalSection
+EndGlobal
