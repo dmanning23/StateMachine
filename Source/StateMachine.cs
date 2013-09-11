@@ -641,7 +641,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="strFilename">file to open</param>
 		/// <returns>whether or not it was able to open it</returns>
-		public bool ReadSerializedFile(string strFilename)
+		public bool ReadXmlFile(string strFilename)
 		{
 			// Open the file.
 			FileStream stream = File.Open(strFilename, FileMode.Open, FileAccess.Read);
@@ -777,7 +777,7 @@ namespace StateMachineBuddy
 				null != StateTableNode;
 				StateTableNode = StateTableNode.NextSibling)
 			{
-				if (!ReadStateTable(StateTableNode))
+				if (!ReadXmlStateTable(StateTableNode))
 				{
 					Debug.Assert(false);
 					return false;
@@ -794,7 +794,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="strFilename">file to open</param>
 		/// <returns>whether or not it was able to open it</returns>
-		public bool AppendSerializedFile(string strFilename)
+		public bool AppendXmlFile(string strFilename)
 		{
 			// Open the file.
 			FileStream stream = File.Open(strFilename, FileMode.Open, FileAccess.Read);
@@ -917,7 +917,7 @@ namespace StateMachineBuddy
 				null != StateTableNode;
 				StateTableNode = StateTableNode.NextSibling)
 			{
-				if (!ReadStateTable(StateTableNode))
+				if (!ReadXmlStateTable(StateTableNode))
 				{
 					Debug.Assert(false);
 					return false;
@@ -929,7 +929,7 @@ namespace StateMachineBuddy
 			return true;
 		}
 
-		private bool ReadStateTable(XmlNode StateTableNode)
+		private bool ReadXmlStateTable(XmlNode StateTableNode)
 		{
 			//this is the <Item Type="SPFSettings.StateTableXML"> node
 			if (null == StateTableNode)
@@ -1044,7 +1044,7 @@ namespace StateMachineBuddy
 		/// write out serialized xna state machine as XML
 		/// </summary>
 		/// <param name="strFilename">teh file to write out to</param>
-		public void WriteXMLFile(string strFilename)
+		public void WriteXml(string strFilename)
 		{
 			//open the file, create it if it doesnt exist yet
 			XmlTextWriter rXMLFile = new XmlTextWriter(strFilename, null);
@@ -1171,7 +1171,7 @@ namespace StateMachineBuddy
 			Debug.Assert(m_iInitialState < NumStates);
 
 			//read in all the data
-			if (!ReadStateTable(myXML.states))
+			if (!ReadSerializedStateTable(myXML.states))
 			{
 				return false;
 			}
@@ -1203,7 +1203,7 @@ namespace StateMachineBuddy
 			Debug.Assert(m_iInitialState < NumStates);
 
 			//read in all the data
-			if (!ReadStateTable(myXML.states))
+			if (!ReadSerializedStateTable(myXML.states))
 			{
 				return false;
 			}
@@ -1289,7 +1289,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="listStates">a list of all teh state change objects</param>
 		/// <returns>whether or not an error occurred reading in the data</returns>
-		private bool ReadStateTable(List<StateTableXML> listStates)
+		private bool ReadSerializedStateTable(List<StateTableXML> listStates)
 		{
 			for (int i = 0; i < listStates.Count; i++)
 			{
