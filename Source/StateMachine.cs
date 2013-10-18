@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework.Content;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-using System;
-using Microsoft.Xna.Framework.Content;
 #if NETWORKING
 using Microsoft.Xna.Framework.Net;
 #endif
