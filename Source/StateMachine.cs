@@ -7,6 +7,7 @@ using System.Xml;
 #if NETWORKING
 using Microsoft.Xna.Framework.Net;
 #endif
+using FilenameBuddy;
 
 namespace StateMachineBuddy
 {
@@ -641,10 +642,10 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="strFilename">file to open</param>
 		/// <returns>whether or not it was able to open it</returns>
-		public bool ReadXmlFile(string strFilename)
+		public bool ReadXmlFile(Filename strFilename)
 		{
 			// Open the file.
-			FileStream stream = File.Open(strFilename, FileMode.Open, FileAccess.Read);
+			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(stream);
 			XmlNode rootNode = xmlDoc.DocumentElement;
@@ -794,10 +795,10 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="strFilename">file to open</param>
 		/// <returns>whether or not it was able to open it</returns>
-		public bool AppendXmlFile(string strFilename)
+		public bool AppendXmlFile(Filename strFilename)
 		{
 			// Open the file.
-			FileStream stream = File.Open(strFilename, FileMode.Open, FileAccess.Read);
+			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(stream);
 			XmlNode rootNode = xmlDoc.DocumentElement;
@@ -1044,10 +1045,10 @@ namespace StateMachineBuddy
 		/// write out serialized xna state machine as XML
 		/// </summary>
 		/// <param name="strFilename">teh file to write out to</param>
-		public void WriteXml(string strFilename)
+		public void WriteXml(Filename strFilename)
 		{
 			//open the file, create it if it doesnt exist yet
-			XmlTextWriter rXMLFile = new XmlTextWriter(strFilename, null);
+			XmlTextWriter rXMLFile = new XmlTextWriter(strFilename.File, null);
 			rXMLFile.Formatting = Formatting.Indented;
 			rXMLFile.Indentation = 1;
 			rXMLFile.IndentChar = '\t';
@@ -1145,10 +1146,10 @@ namespace StateMachineBuddy
 		/// <param name="strResource">name of the resource to load from</param>
 		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
 		/// <returns>whether or not any errors ocurred</returns>
-		public bool ReadSerializedFile(ContentManager rContent, string strResource, int iMessageOffset)
+		public bool ReadSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
 		{
 			//read in serialized xna state machine
-			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource);
+			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
 
 			//get teh number of states, message, and fake the initial state
 			Set(myXML.stateNames.Count, myXML.messageNames.Count, 0, iMessageOffset);
@@ -1187,12 +1188,12 @@ namespace StateMachineBuddy
 		/// <param name="strResource">name of the resource to load from</param>
 		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
 		/// <returns>whether or not any errors ocurred</returns>
-		public bool AppendSerializedFile(ContentManager rContent, string strResource, int iMessageOffset)
+		public bool AppendSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
 		{
 			MessageOffset = iMessageOffset;
 
 			//read in serialized xna state machine
-			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource);
+			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
 
 			//read in and append all the state & message names
 			ReadNames(myXML.stateNames, myXML.messageNames);
