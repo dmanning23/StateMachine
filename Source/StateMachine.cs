@@ -190,6 +190,21 @@ namespace StateMachineBuddy
 		}
 
 		/// <summary>
+		/// Sets an state in the state table to respond to a particular message
+		/// This is less efficeient than the other SetEntry method, so don't overuse it!
+		/// </summary>
+		/// <param name="iState">State to set up a message for</param>
+		/// <param name="strMessage">name of the message to parse</param>
+		/// <param name="strNewState">name of the new state this state will change to after getting the message</param>
+		public void SetEntry(int iState, string strMessage, string strNewState)
+		{
+			//Get the state indexes from the names
+			int iMessage = GetMessageIndexFromText(strMessage);
+			int iNewState = GetStateIndexFromText(strNewState);
+			SetEntry(iState, iMessage, iNewState);
+		}
+
+		/// <summary>
 		/// method to send a message
 		/// </summary>
 		/// <param name="iMessage">message to send to the state machine, 
