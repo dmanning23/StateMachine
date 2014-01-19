@@ -300,6 +300,7 @@ namespace StateMachineBuddy
 				}
 			}
 
+			Debug.Assert(false);
 			return -1;
 		}
 
@@ -718,11 +719,7 @@ namespace StateMachineBuddy
 				Debug.Assert(false);
 				return false;
 			}
-			if (!StateNamesNode.HasChildNodes)
-			{
-				Debug.Assert(false);
-				return false;
-			}
+
 			if ("stateNames" != StateNamesNode.Name)
 			{
 				Debug.Assert(false);
