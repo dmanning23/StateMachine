@@ -859,6 +859,7 @@ namespace StateMachineBuddy
 				Debug.Assert(false);
 				return false;
 			}
+			
 			string strInitialState = InitialNode.InnerXml;
 
 			//next node is the state names
@@ -908,8 +909,8 @@ namespace StateMachineBuddy
 			//read in and append all the state & message names
 			ReadNames(listStateNames, listMessageNames);
 
-			//set the initial state
-			InitialState = GetStateIndexFromText(strInitialState);
+			//TODO: set the initial state
+			//InitialState = GetStateIndexFromText(strInitialState);
 			Debug.Assert(-1 != InitialState);
 
 			//next node is the states
