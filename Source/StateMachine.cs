@@ -300,7 +300,6 @@ namespace StateMachineBuddy
 				}
 			}
 
-			Debug.Assert(false);
 			return -1;
 		}
 
