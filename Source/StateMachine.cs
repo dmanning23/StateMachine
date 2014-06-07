@@ -125,7 +125,7 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// Method for raising the state change event.
 		/// </summary>
-		protected internal virtual void OnStateChange(int iOldState, int iNewState)
+		public virtual void OnStateChange(int iOldState, int iNewState)
 		{
 			if (StateChangedEvent != null)
 			{
