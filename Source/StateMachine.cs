@@ -60,7 +60,7 @@ namespace StateMachineBuddy
 			get { return m_iInitialState; }
 			set
 			{
-				if ((value >= 0) && (value < NumMessages))
+				if ((value >= 0) && (value < NumStates))
 				{
 					m_iInitialState = value;
 				}
@@ -163,6 +163,10 @@ namespace StateMachineBuddy
 			//create the correct number of names for states and messages
 			m_listStateNames = new string[NumStates];
 			m_listMessageNames = new string[NumMessages];
+
+			//Set the initial states
+			PrevState = m_iInitialState;
+			CurrentState = m_iInitialState;
 		}
 
 		/// <summary>
