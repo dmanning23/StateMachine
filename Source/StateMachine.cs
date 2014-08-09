@@ -1,13 +1,14 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-#if NETWORKING
-using Microsoft.Xna.Framework.Net;
-#endif
 using FilenameBuddy;
+#if OUYA
+using Ouya.Console.Api;
+#endif
 
 namespace StateMachineBuddy
 {
@@ -628,32 +629,6 @@ namespace StateMachineBuddy
 
 		#endregion //Methods
 
-		#region Networking
-
-#if NETWORKING
-
-		/// <summary>
-		/// Read this object from a network packet reader.
-		/// </summary>
-		public virtual void ReadFromNetwork(PacketReader packetReader)
-		{
-			//Read the current state and force a state change event if required
-			ForceState(packetReader.ReadInt32());
-		}
-
-		/// <summary>
-		/// Write this object to a network packet reader.
-		/// </summary>
-		public virtual void WriteToNetwork(PacketWriter packetWriter)
-		{
-			//the only thing that needs to be synced is the current state!!!
-			packetWriter.Write(CurrentState);
-		}
-
-#endif
-
-		#endregion //Networking
-
 		#region File IO
 
 		/// <summary>
@@ -664,7 +639,11 @@ namespace StateMachineBuddy
 		public bool ReadXmlFile(Filename strFilename)
 		{
 			// Open the file.
+			#if ANDROID
+			Stream stream = Game.Activity.Assets.Open(strFilename.File);
+			#else
 			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
+			#endif
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(stream);
 			XmlNode rootNode = xmlDoc.DocumentElement;
@@ -813,7 +792,11 @@ namespace StateMachineBuddy
 		public bool AppendXmlFile(Filename strFilename)
 		{
 			// Open the file.
+			#if ANDROID
+			Stream stream = Game.Activity.Assets.Open(strFilename.File);
+			#else
 			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
+			#endif
 			XmlDocument xmlDoc = new XmlDocument();
 			xmlDoc.Load(stream);
 			XmlNode rootNode = xmlDoc.DocumentElement;
