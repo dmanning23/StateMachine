@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Xml;
 using FilenameBuddy;
+using System.Xml;
+using System.Linq;
 #if OUYA
 using Ouya.Console.Api;
 #endif
@@ -448,6 +447,43 @@ namespace StateMachineBuddy
 			Debug.Assert(null != m_listStateNames);
 
 			m_listStateNames[iState] = strStateName;
+		}
+
+		/// <summary>
+		/// Given an enum type, set the matching state names to the text of the enum
+		/// </summary>
+		/// <param name="states">an enum type</param>
+		/// <param name="isStates">true to set state names, false to set message anmes</param>
+		public void SetNames(Type states, bool isStates)
+		{
+			//get the names and values
+			var names = Enum.GetNames(states);
+			var values = Enum.GetValues(states);
+
+			Debug.Assert(names.Length == values.Length);
+			
+			//loop through and set the names
+			int i = 0;
+			foreach (var value in values)
+			{
+				//Get the state index
+				int index = (int) value;
+
+				//get teh name
+				string name = names[i];
+
+				//Set the name of the state at that index
+				if (isStates)
+				{
+					SetStateName(index, name);
+				}
+				else
+				{
+					SetMessageName(index, name);
+				}
+
+				i++;
+			}
 		}
 
 		/// <summary>
@@ -1137,79 +1173,79 @@ namespace StateMachineBuddy
 			rXMLFile.Close();
 		}
 
-		/// <summary>
-		/// Load this dude from an xml file.  
-		/// This removes all the existing data and loads ALL the data into the state machine!
-		/// </summary>
-		/// <param name="rContent">the content opbject to load from</param>
-		/// <param name="strResource">name of the resource to load from</param>
-		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
-		/// <returns>whether or not any errors ocurred</returns>
-		public bool ReadSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
-		{
-			//read in serialized xna state machine
-			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
+		///// <summary>
+		///// Load this dude from an xml file.  
+		///// This removes all the existing data and loads ALL the data into the state machine!
+		///// </summary>
+		///// <param name="rContent">the content opbject to load from</param>
+		///// <param name="strResource">name of the resource to load from</param>
+		///// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
+		///// <returns>whether or not any errors ocurred</returns>
+		//public bool ReadSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
+		//{
+		//	//read in serialized xna state machine
+		//	StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
 
-			//get teh number of states, message, and fake the initial state
-			Set(myXML.stateNames.Count, myXML.messageNames.Count, 0, iMessageOffset);
+		//	//get teh number of states, message, and fake the initial state
+		//	Set(myXML.stateNames.Count, myXML.messageNames.Count, 0, iMessageOffset);
 
-			//read in the state names
-			for (int i = 0; i < NumStates; i++)
-			{
-				m_listStateNames[i] = myXML.stateNames[i];
-			}
+		//	//read in the state names
+		//	for (int i = 0; i < NumStates; i++)
+		//	{
+		//		m_listStateNames[i] = myXML.stateNames[i];
+		//	}
 
-			//read in the message names
-			for (int i = 0; i < NumMessages; i++)
-			{
-				m_listMessageNames[i] = myXML.messageNames[i];
-			}
+		//	//read in the message names
+		//	for (int i = 0; i < NumMessages; i++)
+		//	{
+		//		m_listMessageNames[i] = myXML.messageNames[i];
+		//	}
 
-			//set teh initial state
-			m_iInitialState = GetStateIndexFromText(myXML.initial);
-			Debug.Assert(m_iInitialState >= 0);
-			Debug.Assert(m_iInitialState < NumStates);
+		//	//set teh initial state
+		//	m_iInitialState = GetStateIndexFromText(myXML.initial);
+		//	Debug.Assert(m_iInitialState >= 0);
+		//	Debug.Assert(m_iInitialState < NumStates);
 
-			//read in all the data
-			if (!ReadSerializedStateTable(myXML.states))
-			{
-				return false;
-			}
+		//	//read in all the data
+		//	if (!ReadSerializedStateTable(myXML.states))
+		//	{
+		//		return false;
+		//	}
 
-			return true;
-		}
+		//	return true;
+		//}
 
-		/// <summary>
-		/// Take a state machine file and insert the data into thisd dude
-		/// This keeps all the existing data and adds/appends the file data into the state machine
-		/// </summary>
-		/// <param name="rContent">the content opbject to load from</param>
-		/// <param name="strResource">name of the resource to load from</param>
-		/// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
-		/// <returns>whether or not any errors ocurred</returns>
-		public bool AppendSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
-		{
-			MessageOffset = iMessageOffset;
+		///// <summary>
+		///// Take a state machine file and insert the data into thisd dude
+		///// This keeps all the existing data and adds/appends the file data into the state machine
+		///// </summary>
+		///// <param name="rContent">the content opbject to load from</param>
+		///// <param name="strResource">name of the resource to load from</param>
+		///// <param name="iMessageOffset">the message offset to use, if this is a chained state machine</param>
+		///// <returns>whether or not any errors ocurred</returns>
+		//public bool AppendSerializedFile(ContentManager rContent, Filename strResource, int iMessageOffset)
+		//{
+		//	MessageOffset = iMessageOffset;
 
-			//read in serialized xna state machine
-			StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
+		//	//read in serialized xna state machine
+		//	StateMachineXML myXML = rContent.Load<StateMachineXML>(strResource.GetRelPathFileNoExt());
 
-			//read in and append all the state & message names
-			ReadNames(myXML.stateNames, myXML.messageNames);
+		//	//read in and append all the state & message names
+		//	ReadNames(myXML.stateNames, myXML.messageNames);
 
-			//set teh initial state
-			m_iInitialState = GetStateIndexFromText(myXML.initial);
-			Debug.Assert(m_iInitialState >= 0);
-			Debug.Assert(m_iInitialState < NumStates);
+		//	//set teh initial state
+		//	m_iInitialState = GetStateIndexFromText(myXML.initial);
+		//	Debug.Assert(m_iInitialState >= 0);
+		//	Debug.Assert(m_iInitialState < NumStates);
 
-			//read in all the data
-			if (!ReadSerializedStateTable(myXML.states))
-			{
-				return false;
-			}
+		//	//read in all the data
+		//	if (!ReadSerializedStateTable(myXML.states))
+		//	{
+		//		return false;
+		//	}
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		/// <summary>
 		/// read in the state names form a file

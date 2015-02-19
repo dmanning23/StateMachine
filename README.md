@@ -1,6 +1,4 @@
 StateMachine
 ============
 
-a finite state machine for XNA/Monogame
-
-yo this is still a WIP, not ready for prime time yet :P
+a finite state machine for .Net projects. This is a pretty simple library: set up a state table manually or read in from file, attach to state change events, send state change messages.
