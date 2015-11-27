@@ -169,8 +169,8 @@ namespace StateMachineBuddy
 			}
 
 			//create the correct number of names for states and messages
-			_stateNames = new string[NumStates];
-			_messageNames = new string[NumMessages];
+			_stateNames = new string[numStates];
+			_messageNames = new string[numMessages];
 
 			//Set the initial states
 			PrevState = _initialState;
