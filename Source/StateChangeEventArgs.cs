@@ -10,10 +10,10 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public StateChangeEventArgs(int iOldState, int iNewState)
+		public StateChangeEventArgs(int oldState, int newState)
 		{
-			OldState = iOldState;
-			NewState = iNewState;
+			OldState = oldState;
+			NewState = newState;
 		}
 
 		/// <summary>
