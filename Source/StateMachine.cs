@@ -116,7 +116,7 @@ namespace StateMachineBuddy
 
 		#endregion //Properties
 
-		#region Methods
+		#region Initialization
 
 		/// <summary>
 		/// constructor
@@ -130,17 +130,6 @@ namespace StateMachineBuddy
 			_stateNames = null;
 			_messageNames = null;
 			_data = null;
-		}
-
-		/// <summary>
-		/// Method for raising the state change event.
-		/// </summary>
-		protected virtual void OnStateChange(int oldState, int newState)
-		{
-			if (StateChangedEvent != null)
-			{
-				StateChangedEvent(this, new StateChangeEventArgs(oldState, newState));
-			}
 		}
 
 		/// <summary>
@@ -159,18 +148,18 @@ namespace StateMachineBuddy
 			//allocate the data
 			_data = new int[numStates, numMessages];
 
+			//create the correct number of names for states and messages
+			_stateNames = new string[numStates];
+			_messageNames = new string[numMessages];
+
 			//set the state transitions to defualt
-			for (int i = 0; i < NumStates; i++)
+			for (int i = 0; i < numStates; i++)
 			{
-				for (int j = 0; j < NumMessages; j++)
+				for (int j = 0; j < numMessages; j++)
 				{
 					_data[i, j] = i;
 				}
 			}
-
-			//create the correct number of names for states and messages
-			_stateNames = new string[numStates];
-			_messageNames = new string[numMessages];
 
 			//Set the initial states
 			PrevState = _initialState;
@@ -182,7 +171,7 @@ namespace StateMachineBuddy
 			//set the state machine up
 			Set(Enum.GetValues(statesEnum).Length,
 				Enum.GetValues(messagesEnum).Length,
-				initialState, 
+				initialState,
 				offset);
 
 			//set the names up
@@ -194,9 +183,9 @@ namespace StateMachineBuddy
 		/// Sets an state in the state table to respond to a particular message
 		/// </summary>
 		/// <param name="state">State to set up a message for</param>
-		/// <param name="iMessage">message to parse</param>
-		/// <param name="iNewState">state this state will change to after getting the message</param>
-		public void SetEntry(int state, int message, int newState)
+		/// <param name="message">message to parse</param>
+		/// <param name="nextState">state this state will change to after getting the message</param>
+		public void SetEntry(int state, int message, int nextState)
 		{
 			Debug.Assert(null != _data);
 
@@ -207,48 +196,280 @@ namespace StateMachineBuddy
 			Debug.Assert(state < NumStates);
 			Debug.Assert(adjustedMessage >= 0);
 			Debug.Assert(adjustedMessage < NumMessages);
-			Debug.Assert(newState >= 0);
-			Debug.Assert(newState < NumStates);
+			Debug.Assert(nextState >= 0);
+			Debug.Assert(nextState < NumStates);
 
 			//we have valid values
-			_data[state, adjustedMessage] = newState;
+			_data[state, adjustedMessage] = nextState;
 		}
 
 		/// <summary>
 		/// Sets an state in the state table to respond to a particular message
 		/// This is less efficeient than the other SetEntry method, so don't overuse it!
 		/// </summary>
-		/// <param name="iState">State to set up a message for</param>
-		/// <param name="strMessage">name of the message to parse</param>
-		/// <param name="strNewState">name of the new state this state will change to after getting the message</param>
-		public void SetEntry(int iState, string strMessage, string strNewState)
+		/// <param name="state">State to set up a message for</param>
+		/// <param name="messageName">name of the message to parse</param>
+		/// <param name="nextStateName">name of the new state this state will change to after getting the message</param>
+		public void SetEntry(int state, string messageName, string nextStateName)
 		{
 			//Get the state indexes from the names
-			int iMessage = GetMessageIndexFromText(strMessage);
-			int iNewState = GetStateIndexFromText(strNewState);
-			SetEntry(iState, iMessage, iNewState);
+			int message = GetMessageFromName(messageName);
+			int nextMessage = GetStateFromName(nextStateName);
+			SetEntry(state, message, nextMessage);
 		}
+
+		/// <summary>
+		/// Given an enum type, set the matching state names to the text of the enum
+		/// </summary>
+		/// <param name="states">an enum type</param>
+		/// <param name="isStates">true to set state names, false to set message anmes</param>
+		public void SetNames(Type states, bool isStates)
+		{
+			//get the names and values
+			var names = Enum.GetNames(states);
+			var values = Enum.GetValues(states);
+
+			Debug.Assert(names.Length == values.Length);
+
+			//loop through and set the names
+			int i = 0;
+			foreach (var value in values)
+			{
+				//Set the name of the state at that index
+				if (isStates)
+				{
+					SetStateName((int)value, names[i]);
+				}
+				else
+				{
+					SetMessageName((int)value, names[i]);
+				}
+
+				i++;
+			}
+		}
+
+		/// <summary>
+		/// change the name of a state
+		/// </summary>
+		/// <param name="state">the state to change</param>
+		/// <param name="stateName">the name to change the state to</param>
+		public void SetStateName(int state, string stateName)
+		{
+			Debug.Assert(state >= 0);
+			Debug.Assert(state < NumStates);
+			Debug.Assert(null != _stateNames);
+
+			_stateNames[state] = stateName;
+		}
+
+		/// <summary>
+		/// change the name of a message
+		/// </summary>
+		/// <param name="message">id of the message to change the name of</param>
+		/// <param name="strMessageName">the name to change the message to</param>
+		public void SetMessageName(int message, string messageName)
+		{
+			Debug.Assert(null != _messageNames);
+
+			//adjust by the message offset
+			int adjustedMessage = message - MessageOffset;
+
+			Debug.Assert(adjustedMessage >= 0);
+			Debug.Assert(adjustedMessage < NumMessages);
+
+			_messageNames[adjustedMessage] = messageName;
+		}
+
+		/// <summary>
+		/// Resize the state machine, removing and appending from the end
+		/// </summary>
+		/// <param name="numStates">the new number of states</param>
+		/// <param name="numMessages">the new number of messages</param>
+		public void Resize(int numStates, int numMessages)
+		{
+			if ((numStates <= 0) || (numMessages <= 0))
+			{
+				return;
+			}
+
+			//create temp buffer to store data
+			int[,] data = new int[numStates, numMessages];
+
+			//copy old data
+			for (int i = 0; i < numStates; i++)
+			{
+				for (int j = 0; j < numMessages; j++)
+				{
+					//check if the state being copied is still in range of the new size
+					if ((i < NumStates) && (j < NumMessages) && (_data[i, j] < numStates))
+					{
+						data[i, j] = _data[i, j];
+					}
+					else
+					{
+						data[i, j] = i;
+					}
+				}
+			}
+
+			//allocate and copy new state tags
+			string[] stateNames = new string[numStates];
+			for (int i = 0; i < numStates; i++)
+			{
+				if (i < NumStates)
+				{
+					stateNames[i] = _stateNames[i];
+				}
+			}
+
+			//allocate and copy new message tags
+			string[] messageNames = new string[numMessages];
+			for (int i = 0; i < numMessages; i++)
+			{
+				if (i < NumMessages)
+				{
+					messageNames[i] = _messageNames[i];
+				}
+			}
+
+			//point to new data
+			_stateNames = stateNames;
+			_messageNames = messageNames;
+			_data = data;
+		}
+
+		/// <summary>
+		/// Remove a state from the state machine
+		/// </summary>
+		/// <param name="state">index of the state to be removed</param>
+		public void RemoveState(int state)
+		{
+			Debug.Assert(0 <= state);
+			Debug.Assert(state < NumStates);
+			Debug.Assert(NumStates > 0);
+			Debug.Assert(null != _data);
+			Debug.Assert(null != _stateNames);
+
+			if (NumStates == 1)
+			{
+				//can't remove the last state from the state machine
+				return;
+			}
+
+			//set up a temp array for state data
+			int[,] data = new int[(NumStates - 1), NumMessages];
+
+			//set up temp array for state tags
+			string[] tempStateNames = new string[(NumStates - 1)];
+
+			//copy all the data into the new array, except for the state to delete
+			int curState = 0;
+			for (int i = 0; i < NumStates; i++)
+			{
+				if (state != curState)
+				{
+					//copy the messages
+					for (int j = 0; j < NumMessages; j++)
+					{
+						//if the state transition goes to the target state, reset it
+						if (state == _data[i, j])
+						{
+							data[curState, j] = curState;
+						}
+						else
+						{
+							data[curState, j] = _data[i, j];
+						}
+					}
+
+					//copy teh state name
+					tempStateNames[curState] = _stateNames[i];
+
+					//copy the state name
+					curState++;
+				}
+			}
+
+			//point to the new data
+			_data = data;
+			_stateNames = tempStateNames;
+
+			//check if the initial state needs to change
+			if ((_initialState >= NumStates) || (_initialState == state))
+			{
+				_initialState = 0;
+			}
+		}
+
+		/// <summary>
+		/// Remove a message from the state machine
+		/// </summary>
+		/// <param name="message">index of the message to be removed</param>
+		public void RemoveMessage(int message)
+		{
+			Debug.Assert(null != _data);
+			Debug.Assert(null != _messageNames);
+			Debug.Assert(0 <= message);
+			Debug.Assert(message < NumMessages);
+			Debug.Assert(NumMessages > 0);
+
+			if (NumMessages == 1)
+			{
+				//cant remove last message
+				return;
+			}
+
+			//set up a temp array for state data
+			int[,] data = new int[NumStates, (NumMessages - 1)];
+
+			//set up temp array for message names
+			string[] messageNames = new string[(NumMessages - 1)];
+
+			//copy all the data into the new array, except for the message to delete
+			for (int i = 0; i < NumStates; i++)
+			{
+				int iCurMessage = 0;
+				for (int j = 0; j < NumMessages; j++)
+				{
+					if (message != j)
+					{
+						data[i, iCurMessage] = _data[i, j];
+						messageNames[iCurMessage] = _messageNames[j];
+						iCurMessage++;
+					}
+				}
+			}
+
+			//point to the new data
+			_data = data;
+			_messageNames = messageNames;
+		}
+
+		#endregion Initialization
+
+		#region Important Methods
 
 		/// <summary>
 		/// method to send a message
 		/// </summary>
-		/// <param name="iMessage">message to send to the state machine, 
+		/// <param name="message">message to send to the state machine, 
 		/// should be offset by the message offset of this dude</param>
-		public virtual void SendStateMessage(int iMessage)
+		public virtual void SendStateMessage(int message)
 		{
 			Debug.Assert(null != _data);
 
 			//change by the message offset of this dude
-			int iAdjustedMessage = iMessage - MessageOffset;
+			int adjustedMessage = message - MessageOffset;
 
-			Debug.Assert(iAdjustedMessage >= 0);
-			Debug.Assert(iAdjustedMessage < NumMessages);
+			Debug.Assert(adjustedMessage >= 0);
+			Debug.Assert(adjustedMessage < NumMessages);
 
 			//get the current state
 			int iCurrentState = CurrentState;
 
 			//we got a valid message
-			CurrentState = _data[CurrentState, iAdjustedMessage];
+			CurrentState = _data[CurrentState, adjustedMessage];
 
 			//did the state change
 			if (iCurrentState != CurrentState)
@@ -264,20 +485,20 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// Method to force the state machine to a certain state
 		/// </summary>
-		/// <param name="iState">state to set machine to</param>
-		public void ForceState(int iState)
+		/// <param name="state">state to set machine to</param>
+		public void ForceState(int state)
 		{
-			Debug.Assert(iState >= 0);
-			Debug.Assert(iState < NumStates);
+			Debug.Assert(state >= 0);
+			Debug.Assert(state < NumStates);
 
-			int iCurrentState = CurrentState;
-			CurrentState = iState;
+			int currentState = CurrentState;
+			CurrentState = state;
 
 			//did the state change
-			if (iCurrentState != CurrentState)
+			if (currentState != CurrentState)
 			{
 				//set the previous state
-				PrevState = iCurrentState;
+				PrevState = currentState;
 
 				//fire off a message
 				OnStateChange(PrevState, CurrentState);
@@ -285,47 +506,16 @@ namespace StateMachineBuddy
 		}
 
 		/// <summary>
-		/// Get the index of a state based on a state name
+		/// Method for raising the state change event.
 		/// </summary>
-		/// <param name="strText">name of the state to get the index of</param>
-		/// <returns>int index of the state with that name, -1 if no state found</returns>
-		public int GetStateIndexFromText(string strText)
+		/// <param name="oldState">the state changing from</param>
+		/// <param name="nextState">the next state</param>
+		protected virtual void OnStateChange(int oldState, int nextState)
 		{
-			Debug.Assert(null != _stateNames);
-
-			//loop through messages to find the right one
-			for (int i = 0; i < NumStates; i++)
+			if (StateChangedEvent != null)
 			{
-				if (strText == _stateNames[i])
-				{
-					return i;
-				}
+				StateChangedEvent(this, new StateChangeEventArgs(oldState, nextState));
 			}
-
-			return -1;
-		}
-
-		/// <summary>
-		/// Get the index of a message from the message name
-		/// </summary>
-		/// <param name="strText">name of teh message to get the id for</param>
-		/// <returns>if of the message</returns>
-		public int GetMessageIndexFromText(string strText)
-		{
-			Debug.Assert(null != _messageNames);
-
-			//loop through messages to find the right one
-			for (int i = 0; i < NumMessages; i++)
-			{
-				if (strText == _messageNames[i])
-				{
-					//adjust by the message offset
-					int iAdjustedMessage = i + MessageOffset;
-					return iAdjustedMessage;
-				}
-			}
-
-			return -1;
 		}
 
 		/// <summary>
@@ -343,312 +533,126 @@ namespace StateMachineBuddy
 			}
 		}
 
+		#endregion //Important Methods
+
+		#region Access Methods
+
 		/// <summary>
-		/// Resize the state machine, removing and appending from the end
+		/// Get the index of a state based on a state name
 		/// </summary>
-		/// <param name="iNumStates">the new number of states</param>
-		/// <param name="iNumMessages">the new number of messages</param>
-		public void Resize(int iNumStates, int iNumMessages)
+		/// <param name="stateName">name of the state to get the index of</param>
+		/// <returns>int index of the state with that name, -1 if no state found</returns>
+		public int GetStateFromName(string stateName)
 		{
-			if ((iNumStates <= 0) || (iNumMessages <= 0))
-			{
-				return;
-			}
+			Debug.Assert(null != _stateNames);
 
-			//create temp buffer to store data
-			int[,] pData = new int[iNumStates, iNumMessages];
-
-			//copy old data
-			for (int i = 0; i < iNumStates; i++)
+			//loop through messages to find the right one
+			for (int i = 0; i < NumStates; i++)
 			{
-				for (int j = 0; j < iNumMessages; j++)
+				if (stateName == _stateNames[i])
 				{
-					//check if the state being copied is still in range of the new size
-					if ((i < NumStates) && (j < NumMessages) && (_data[i, j] < iNumStates))
-					{
-						pData[i, j] = _data[i, j];
-					}
-					else
-					{
-						pData[i, j] = i;
-					}
+					return i;
 				}
 			}
 
-			//allocate and copy new state tags
-			string[] StateNames = new string[iNumStates];
-			for (int i = 0; i < iNumStates; i++)
+			return -1;
+		}
+
+		/// <summary>
+		/// Get the index of a message from the message name
+		/// </summary>
+		/// <param name="messageName">name of teh message to get the id for</param>
+		/// <returns>if of the message</returns>
+		public int GetMessageFromName(string messageName)
+		{
+			Debug.Assert(null != _messageNames);
+
+			//loop through messages to find the right one
+			for (int i = 0; i < NumMessages; i++)
 			{
-				if (i < NumStates)
+				if (messageName == _messageNames[i])
 				{
-					StateNames[i] = _stateNames[i];
+					//adjust by the message offset
+					int adjustedMessage = i + MessageOffset;
+					return adjustedMessage;
 				}
 			}
 
-			//allocate and copy new message tags
-			string[] MessageNames = new string[iNumMessages];
-			for (int i = 0; i < iNumMessages; i++)
-			{
-				if (i < NumMessages)
-				{
-					MessageNames[i] = _messageNames[i];
-				}
-			}
-
-			//point to new data
-			_stateNames = StateNames;
-			_messageNames = MessageNames;
-			_data = pData;
+			return -1;
 		}
 
 		/// <summary>
 		/// Get a state transition
 		/// </summary>
-		/// <param name="iState">the beginning state</param>
+		/// <param name="state">the beginning state</param>
 		/// <param name="iMessage">the message to send to that state</param>
 		/// <returns>int: the id of the target state when the specified message is sent to the specified state</returns>
-		public int GetEntry(int iState, int iMessage)
+		public int GetEntry(int state, int message)
 		{
 			Debug.Assert(null != _data);
 
 			//adjust the message by the offset
-			int iAdjustedMessage = iMessage - MessageOffset;
+			int adjustedMessage = message - MessageOffset;
 
-			Debug.Assert(iState >= 0);
-			Debug.Assert(iState < NumStates);
-			Debug.Assert(iAdjustedMessage >= 0);
-			Debug.Assert(iAdjustedMessage < NumMessages);
+			Debug.Assert(state >= 0);
+			Debug.Assert(state < NumStates);
+			Debug.Assert(adjustedMessage >= 0);
+			Debug.Assert(adjustedMessage < NumMessages);
 
-			return _data[iState, iAdjustedMessage];
+			return _data[state, adjustedMessage];
 		}
 
 		/// <summary>
 		/// Get the name of a state
 		/// </summary>
-		/// <param name="iState">teh id of the state to get the name of</param>
+		/// <param name="state">teh id of the state to get the name of</param>
 		/// <returns>get a state name </returns>
-		public string GetStateName(int iState)
+		public string GetStateName(int state)
 		{
-			Debug.Assert(iState >= 0);
-			Debug.Assert(iState < NumStates);
+			Debug.Assert(state >= 0);
+			Debug.Assert(state < NumStates);
 			Debug.Assert(null != _stateNames);
 
-			return _stateNames[iState];
+			return _stateNames[state];
 		}
 
 		/// <summary>
 		/// Get the name of a message
 		/// </summary>
-		/// <param name="iMessage">the id of a message to get the name of</param>
+		/// <param name="message">the id of a message to get the name of</param>
 		/// <returns>given a message id, get the message name</returns>
-		public string GetMessageName(int iMessage)
+		public string GetMessageName(int message)
 		{
 			Debug.Assert(null != _messageNames);
 
 			//adjust by the message offset
-			int iAdjustedMessage = iMessage - MessageOffset;
+			int adjustedMessage = message - MessageOffset;
 
-			Debug.Assert(iAdjustedMessage >= 0);
-			Debug.Assert(iAdjustedMessage < NumMessages);
+			Debug.Assert(adjustedMessage >= 0);
+			Debug.Assert(adjustedMessage < NumMessages);
 
-			return _messageNames[iAdjustedMessage];
-		}
-
-		/// <summary>
-		/// change the name of a state
-		/// </summary>
-		/// <param name="iState">the state to change</param>
-		/// <param name="strStateName">the name to change the state to</param>
-		public void SetStateName(int iState, string strStateName)
-		{
-			Debug.Assert(iState >= 0);
-			Debug.Assert(iState < NumStates);
-			Debug.Assert(null != _stateNames);
-
-			_stateNames[iState] = strStateName;
-		}
-
-		/// <summary>
-		/// Given an enum type, set the matching state names to the text of the enum
-		/// </summary>
-		/// <param name="states">an enum type</param>
-		/// <param name="isStates">true to set state names, false to set message anmes</param>
-		public void SetNames(Type states, bool isStates)
-		{
-			//get the names and values
-			var names = Enum.GetNames(states);
-			var values = Enum.GetValues(states);
-
-			Debug.Assert(names.Length == values.Length);
-			
-			//loop through and set the names
-			int i = 0;
-			foreach (var value in values)
-			{
-				//Get the state index
-				int index = (int) value;
-
-				//get teh name
-				string name = names[i];
-
-				//Set the name of the state at that index
-				if (isStates)
-				{
-					SetStateName(index, name);
-				}
-				else
-				{
-					SetMessageName(index, name);
-				}
-
-				i++;
-			}
-		}
-
-		/// <summary>
-		/// change the name of a message
-		/// </summary>
-		/// <param name="iMessage">id of the message to change the name of</param>
-		/// <param name="strMessageName">the name to change the message to</param>
-		public void SetMessageName(int iMessage, string strMessageName)
-		{
-			Debug.Assert(null != _messageNames);
-
-			//adjust by the message offset
-			int iAdjustedMessage = iMessage - MessageOffset;
-
-			Debug.Assert(iAdjustedMessage >= 0);
-			Debug.Assert(iAdjustedMessage < NumMessages);
-
-			_messageNames[iAdjustedMessage] = strMessageName;
-		}
-
-		/// <summary>
-		/// Remove a state from the state machine
-		/// </summary>
-		/// <param name="iState">index of the state to be removed</param>
-		public void RemoveState(int iState)
-		{
-			Debug.Assert(0 <= iState);
-			Debug.Assert(iState < NumStates);
-			Debug.Assert(NumStates > 0);
-			Debug.Assert(null != _data);
-			Debug.Assert(null != _stateNames);
-
-			if (NumStates == 1)
-			{
-				//can't remove the last state from the state machine
-				return;
-			}
-
-			//set up a temp array for state data
-			int[,] pData = new int[(NumStates - 1), NumMessages];
-
-			//set up temp array for state tags
-			string[] pTempStrings = new string[(NumStates - 1)];
-
-			//copy all the data into the new array, except for the state to delete
-			int iCurState = 0;
-			for (int i = 0; i < NumStates; i++)
-			{
-				if (iState != iCurState)
-				{
-					//copy the messages
-					for (int j = 0; j < NumMessages; j++)
-					{
-						//if the state transition goes to the target state, reset it
-						if (iState == _data[i, j])
-						{
-							pData[iCurState, j] = iCurState;
-						}
-						else
-						{
-							pData[iCurState, j] = _data[i, j];
-						}
-					}
-
-					//copy teh state name
-					pTempStrings[iCurState] = _stateNames[i];
-
-					//copy the state name
-					iCurState++;
-				}
-			}
-
-			//point to the new data
-			_data = pData;
-			_stateNames = pTempStrings;
-
-			//check if the initial state needs to change
-			if ((_initialState >= NumStates) || (_initialState == iState))
-			{
-				_initialState = 0;
-			}
-		}
-
-		/// <summary>
-		/// Remove a message from the state machine
-		/// </summary>
-		/// <param name="iMessage">index of the message to be removed</param>
-		public void RemoveMessage(int iMessage)
-		{
-			Debug.Assert(null != _data);
-			Debug.Assert(null != _messageNames);
-			Debug.Assert(0 <= iMessage);
-			Debug.Assert(iMessage < NumMessages);
-			Debug.Assert(NumMessages > 0);
-
-			if (NumMessages == 1)
-			{
-				//cant remove last message
-				return;
-			}
-
-			//set up a temp array for state data
-			int[,] pData = new int[NumStates, (NumMessages - 1)];
-
-			//set up temp array for message names
-			string[] pTempStrings = new string[(NumMessages - 1)];
-
-			//copy all the data into the new array, except for the message to delete
-			for (int i = 0; i < NumStates; i++)
-			{
-				int iCurMessage = 0;
-				for (int j = 0; j < NumMessages; j++)
-				{
-					if (iMessage != j)
-					{
-						pData[i, iCurMessage] = _data[i, j];
-						pTempStrings[iCurMessage] = _messageNames[j];
-						iCurMessage++;
-					}
-				}
-			}
-
-			//point to the new data
-			_data = pData;
-			_messageNames = pTempStrings;
+			return _messageNames[adjustedMessage];
 		}
 
 		/// <summary>
 		/// check if this is the same as another state machine
 		/// todo: isn't this doing it wrong?  override isequals or whatever
 		/// </summary>
-		/// <param name="rInst">thing to compare to</param>
+		/// <param name="inst">thing to compare to</param>
 		/// <returns>whether not the same thing</returns>
-		public bool Compare(StateMachine rInst)
+		public bool Compare(StateMachine inst)
 		{
 			//compare two state machines
-			if ((_initialState != rInst._initialState) ||
-				(NumStates != rInst.NumStates) ||
-				(NumMessages != rInst.NumMessages))
+			if ((_initialState != inst._initialState) ||
+				(NumStates != inst.NumStates) ||
+				(NumMessages != inst.NumMessages))
 			{
 				return false;
 			}
 
 			for (int i = 0; i < NumStates; i++)
 			{
-				if (_stateNames[i] != rInst._stateNames[i])
+				if (_stateNames[i] != inst._stateNames[i])
 				{
 					return false;
 				}
@@ -656,7 +660,7 @@ namespace StateMachineBuddy
 
 			for (int i = 0; i < NumMessages; i++)
 			{
-				if (_messageNames[i] != rInst._messageNames[i])
+				if (_messageNames[i] != inst._messageNames[i])
 				{
 					return false;
 				}
@@ -666,7 +670,7 @@ namespace StateMachineBuddy
 			{
 				for (int j = 0; j < NumMessages; j++)
 				{
-					if (_data[i, j] != rInst._data[i, j])
+					if (_data[i, j] != inst._data[i, j])
 					{
 						return false;
 					}
@@ -676,7 +680,7 @@ namespace StateMachineBuddy
 			return true;
 		}
 
-		#endregion //Methods
+		#endregion //Access Methods
 
 		#region File IO
 
@@ -800,7 +804,7 @@ namespace StateMachineBuddy
 			}
 
 			//set the initial state
-			InitialState = GetStateIndexFromText(strInitialState);
+			InitialState = GetStateFromName(strInitialState);
 			Debug.Assert(-1 != InitialState);
 
 			//next node is the states
@@ -1010,7 +1014,7 @@ namespace StateMachineBuddy
 				return false;
 			}
 			string strCurrentStateName = CurrentStateNameNode.InnerXml;
-			int iCurrentState = GetStateIndexFromText(strCurrentStateName);
+			int iCurrentState = GetStateFromName(strCurrentStateName);
 
 			Debug.Assert(-1 != iCurrentState);
 
@@ -1078,8 +1082,8 @@ namespace StateMachineBuddy
 				string strMessage = StateChangeMessageNode.InnerXml;
 				string strTargetState = StateChangeTargetNode.InnerXml;
 
-				int iMessage = GetMessageIndexFromText(StateChangeMessageNode.InnerXml);
-				int iTargetState = GetStateIndexFromText(StateChangeTargetNode.InnerXml);
+				int iMessage = GetMessageFromName(StateChangeMessageNode.InnerXml);
+				int iTargetState = GetStateFromName(StateChangeTargetNode.InnerXml);
 
 				Debug.Assert(iMessage >= 0);
 				Debug.Assert(iTargetState >= 0);
@@ -1202,7 +1206,7 @@ namespace StateMachineBuddy
 			int iNumNewStates = 0;
 			for (int i = 0; i < listStateNames.Count; i++)
 			{
-				int iStateIndex = GetStateIndexFromText(listStateNames[i]);
+				int iStateIndex = GetStateFromName(listStateNames[i]);
 				if (-1 == iStateIndex)
 				{
 					iNumNewStates++;
@@ -1213,7 +1217,7 @@ namespace StateMachineBuddy
 			int iNumNewMessages = 0;
 			for (int i = 0; i < listMessageNames.Count; i++)
 			{
-				int iMessageIndex = GetMessageIndexFromText(listMessageNames[i]);
+				int iMessageIndex = GetMessageFromName(listMessageNames[i]);
 				if (-1 == iMessageIndex)
 				{
 					iNumNewMessages++;
@@ -1233,7 +1237,7 @@ namespace StateMachineBuddy
 				for (int i = 0; i < listStateNames.Count; i++)
 				{
 					//is this state already in there?
-					int iStateIndex = GetStateIndexFromText(listStateNames[i]);
+					int iStateIndex = GetStateFromName(listStateNames[i]);
 					if (-1 == iStateIndex)
 					{
 						_stateNames[iNextBlankState] = listStateNames[i];
@@ -1249,7 +1253,7 @@ namespace StateMachineBuddy
 				for (int i = 0; i < listMessageNames.Count; i++)
 				{
 					//is this Message already in there?
-					int iMessageIndex = GetMessageIndexFromText(listMessageNames[i]);
+					int iMessageIndex = GetMessageFromName(listMessageNames[i]);
 					if (-1 == iMessageIndex)
 					{
 						_messageNames[iNextBlankMessage] = listMessageNames[i];
