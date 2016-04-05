@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
-#if OUYA
-using Ouya.Console.Api;
-#endif
 
 namespace StateMachineBuddy
 {

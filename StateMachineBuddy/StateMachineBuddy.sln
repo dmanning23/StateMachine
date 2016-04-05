@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.DesktopGL", "StateMachineBuddy.DesktopGL\StateMachineBuddy.DesktopGL.csproj", "{C3B7AAF8-7052-4898-902B-52F126EDF96A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.Android", "StateMachineBuddy.Android\StateMachineBuddy.Android.csproj", "{19DA06E2-72B2-4B45-92D9-DC5CD396B884}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.iOS", "StateMachineBuddy.iOS\StateMachineBuddy.iOS.csproj", "{B1731281-2433-4943-A507-E7E3F973B03A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.Tests", "StateMachineBuddy.Tests\StateMachineBuddy.Tests.csproj", "{189535E3-A82F-4F0B-BB17-D358AF64F8D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AppStore|Any CPU = AppStore|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3B7AAF8-7052-4898-902B-52F126EDF96A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{189535E3-A82F-4F0B-BB17-D358AF64F8D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
