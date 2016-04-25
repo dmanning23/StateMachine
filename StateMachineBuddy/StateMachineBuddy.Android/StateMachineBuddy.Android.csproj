@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FilenameBuddy.Android, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FilenameBuddy.Android.1.0.1\lib\FilenameBuddy.Android.dll</HintPath>
+      <HintPath>..\packages\FilenameBuddy.1.0.1\lib\MonoAndroid10\FilenameBuddy.Android.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Android" />

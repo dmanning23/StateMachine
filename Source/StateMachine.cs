@@ -689,148 +689,148 @@ namespace StateMachineBuddy
 		public bool ReadXmlFile(Filename strFilename)
 		{
 			// Open the file.
-			#if ANDROID
-			Stream stream = Game.Activity.Assets.Open(strFilename.File);
-			#else
-			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
-			#endif
-			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(stream);
-			XmlNode rootNode = xmlDoc.DocumentElement;
+#if ANDROID
+			using (var stream = Game.Activity.Assets.Open(strFilename.File))
+#else
+			using (var stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read))
+#endif
+			{
+				XmlDocument xmlDoc = new XmlDocument();
+				xmlDoc.Load(stream);
+				XmlNode rootNode = xmlDoc.DocumentElement;
 
-			if (rootNode.NodeType != XmlNodeType.Element)
-			{
-				//should be an xml node!!!
-				Debug.Assert(false);
-				return false;
-			}
+				if (rootNode.NodeType != XmlNodeType.Element)
+				{
+					//should be an xml node!!!
+					Debug.Assert(false);
+					return false;
+				}
 
-			//eat up the name of that xml node
-			if (("XnaContent" != rootNode.Name) || !rootNode.HasChildNodes)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//next node is "<Asset Type="SPFSettings.StateMachineXML">"
-			XmlNode AssetNode = rootNode.FirstChild;
-			if (null == AssetNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if (!AssetNode.HasChildNodes)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("Asset" != AssetNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//next node is "<initial>"
-			XmlNode InitialNode = AssetNode.FirstChild;
-			if (null == InitialNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("initial" != InitialNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			string strInitialState = InitialNode.InnerXml;
-
-			//next node is the state names
-			XmlNode StateNamesNode = InitialNode.NextSibling;
-			if (null == StateNamesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			if ("stateNames" != StateNamesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			
-			//read in all the state names
-			List<string> listStateNames = new List<string>();
-			for (XmlNode childNode = StateNamesNode.FirstChild;
-				null != childNode;
-				childNode = childNode.NextSibling)
-			{
-				listStateNames.Add(childNode.InnerXml);
-			}
-
-			//next node is the message names
-			XmlNode MessageNamesNode = StateNamesNode.NextSibling;
-			if (null == MessageNamesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("messageNames" != MessageNamesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//read in all the message names
-			List<string> listMessageNames = new List<string>();
-			for (XmlNode childNode = MessageNamesNode.FirstChild;
-				null != childNode;
-				childNode = childNode.NextSibling)
-			{
-				listMessageNames.Add(childNode.InnerXml);
-			}
-
-			//set all the state and message names
-			Set(listStateNames.Count, listMessageNames.Count, 0, 0);
-			for (int i = 0; i < listStateNames.Count; i++)
-			{
-				_stateNames[i] = listStateNames[i];
-			}
-			for (int i = 0; i < listMessageNames.Count; i++)
-			{
-				_messageNames[i] = listMessageNames[i];
-			}
-
-			//set the initial state
-			InitialState = GetStateFromName(strInitialState);
-			Debug.Assert(-1 != InitialState);
-
-			//next node is the states
-			XmlNode StatesNode = MessageNamesNode.NextSibling;
-			if (null == StatesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("states" != StatesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//the rest of the nodes are the states
-			for (XmlNode StateTableNode = StatesNode.FirstChild;
-				null != StateTableNode;
-				StateTableNode = StateTableNode.NextSibling)
-			{
-				if (!ReadXmlStateTable(StateTableNode))
+				//eat up the name of that xml node
+				if (("XnaContent" != rootNode.Name) || !rootNode.HasChildNodes)
 				{
 					Debug.Assert(false);
 					return false;
 				}
-			}
 
-			// Close the file.
-			stream.Close();
+				//next node is "<Asset Type="SPFSettings.StateMachineXML">"
+				XmlNode AssetNode = rootNode.FirstChild;
+				if (null == AssetNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if (!AssetNode.HasChildNodes)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("Asset" != AssetNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//next node is "<initial>"
+				XmlNode InitialNode = AssetNode.FirstChild;
+				if (null == InitialNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("initial" != InitialNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				string strInitialState = InitialNode.InnerXml;
+
+				//next node is the state names
+				XmlNode StateNamesNode = InitialNode.NextSibling;
+				if (null == StateNamesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				if ("stateNames" != StateNamesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//read in all the state names
+				List<string> listStateNames = new List<string>();
+				for (XmlNode childNode = StateNamesNode.FirstChild;
+					null != childNode;
+					childNode = childNode.NextSibling)
+				{
+					listStateNames.Add(childNode.InnerXml);
+				}
+
+				//next node is the message names
+				XmlNode MessageNamesNode = StateNamesNode.NextSibling;
+				if (null == MessageNamesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("messageNames" != MessageNamesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//read in all the message names
+				List<string> listMessageNames = new List<string>();
+				for (XmlNode childNode = MessageNamesNode.FirstChild;
+					null != childNode;
+					childNode = childNode.NextSibling)
+				{
+					listMessageNames.Add(childNode.InnerXml);
+				}
+
+				//set all the state and message names
+				Set(listStateNames.Count, listMessageNames.Count, 0, 0);
+				for (int i = 0; i < listStateNames.Count; i++)
+				{
+					_stateNames[i] = listStateNames[i];
+				}
+				for (int i = 0; i < listMessageNames.Count; i++)
+				{
+					_messageNames[i] = listMessageNames[i];
+				}
+
+				//set the initial state
+				InitialState = GetStateFromName(strInitialState);
+				Debug.Assert(-1 != InitialState);
+
+				//next node is the states
+				XmlNode StatesNode = MessageNamesNode.NextSibling;
+				if (null == StatesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("states" != StatesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//the rest of the nodes are the states
+				for (XmlNode StateTableNode = StatesNode.FirstChild;
+					null != StateTableNode;
+					StateTableNode = StateTableNode.NextSibling)
+				{
+					if (!ReadXmlStateTable(StateTableNode))
+					{
+						Debug.Assert(false);
+						return false;
+					}
+				}
+			}
+			
 			return true;
 		}
 
@@ -842,140 +842,139 @@ namespace StateMachineBuddy
 		public bool AppendXmlFile(Filename strFilename)
 		{
 			// Open the file.
-			#if ANDROID
-			Stream stream = Game.Activity.Assets.Open(strFilename.File);
-			#else
-			FileStream stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read);
-			#endif
-			XmlDocument xmlDoc = new XmlDocument();
-			xmlDoc.Load(stream);
-			XmlNode rootNode = xmlDoc.DocumentElement;
+#if ANDROID
+			using (var stream = Game.Activity.Assets.Open(strFilename.File))
+#else
+			using (var stream = File.Open(strFilename.File, FileMode.Open, FileAccess.Read))
+#endif
+			{
+				XmlDocument xmlDoc = new XmlDocument();
+				xmlDoc.Load(stream);
+				XmlNode rootNode = xmlDoc.DocumentElement;
 
-			if (rootNode.NodeType != XmlNodeType.Element)
-			{
-				//should be an xml node!!!
-				Debug.Assert(false);
-				return false;
-			}
+				if (rootNode.NodeType != XmlNodeType.Element)
+				{
+					//should be an xml node!!!
+					Debug.Assert(false);
+					return false;
+				}
 
-			//eat up the name of that xml node
-			if (("XnaContent" != rootNode.Name) || !rootNode.HasChildNodes)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//next node is "<Asset Type="SPFSettings.StateMachineXML">"
-			XmlNode AssetNode = rootNode.FirstChild;
-			if (null == AssetNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if (!AssetNode.HasChildNodes)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("Asset" != AssetNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//next node is "<initial>"
-			XmlNode InitialNode = AssetNode.FirstChild;
-			if (null == InitialNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("initial" != InitialNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			
-			string strInitialState = InitialNode.InnerXml;
-
-			//next node is the state names
-			XmlNode StateNamesNode = InitialNode.NextSibling;
-			if (null == StateNamesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("stateNames" != StateNamesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//read in all the state names
-			List<string> listStateNames = new List<string>();
-			for (XmlNode childNode = StateNamesNode.FirstChild;
-				null != childNode;
-				childNode = childNode.NextSibling)
-			{
-				listStateNames.Add(childNode.InnerXml);
-			}
-
-			//next node is the message names
-			XmlNode MessageNamesNode = StateNamesNode.NextSibling;
-			if (null == MessageNamesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("messageNames" != MessageNamesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//read in all the message names
-			List<string> listMessageNames = new List<string>();
-			for (XmlNode childNode = MessageNamesNode.FirstChild;
-				null != childNode;
-				childNode = childNode.NextSibling)
-			{
-				listMessageNames.Add(childNode.InnerXml);
-			}
-
-			//read in and append all the state & message names
-			ReadNames(listStateNames, listMessageNames);
-
-			//TODO: set the initial state
-			//InitialState = GetStateIndexFromText(strInitialState);
-			Debug.Assert(-1 != InitialState);
-
-			//next node is the states
-			XmlNode StatesNode = MessageNamesNode.NextSibling;
-			if (null == StatesNode)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-			if ("states" != StatesNode.Name)
-			{
-				Debug.Assert(false);
-				return false;
-			}
-
-			//the rest of the nodes are the states
-			for (XmlNode StateTableNode = StatesNode.FirstChild;
-				null != StateTableNode;
-				StateTableNode = StateTableNode.NextSibling)
-			{
-				if (!ReadXmlStateTable(StateTableNode))
+				//eat up the name of that xml node
+				if (("XnaContent" != rootNode.Name) || !rootNode.HasChildNodes)
 				{
 					Debug.Assert(false);
 					return false;
 				}
-			}
 
-			// Close the file.
-			stream.Close();
+				//next node is "<Asset Type="SPFSettings.StateMachineXML">"
+				XmlNode AssetNode = rootNode.FirstChild;
+				if (null == AssetNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if (!AssetNode.HasChildNodes)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("Asset" != AssetNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//next node is "<initial>"
+				XmlNode InitialNode = AssetNode.FirstChild;
+				if (null == InitialNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("initial" != InitialNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				string strInitialState = InitialNode.InnerXml;
+
+				//next node is the state names
+				XmlNode StateNamesNode = InitialNode.NextSibling;
+				if (null == StateNamesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("stateNames" != StateNamesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//read in all the state names
+				List<string> listStateNames = new List<string>();
+				for (XmlNode childNode = StateNamesNode.FirstChild;
+					null != childNode;
+					childNode = childNode.NextSibling)
+				{
+					listStateNames.Add(childNode.InnerXml);
+				}
+
+				//next node is the message names
+				XmlNode MessageNamesNode = StateNamesNode.NextSibling;
+				if (null == MessageNamesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("messageNames" != MessageNamesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//read in all the message names
+				List<string> listMessageNames = new List<string>();
+				for (XmlNode childNode = MessageNamesNode.FirstChild;
+					null != childNode;
+					childNode = childNode.NextSibling)
+				{
+					listMessageNames.Add(childNode.InnerXml);
+				}
+
+				//read in and append all the state & message names
+				ReadNames(listStateNames, listMessageNames);
+
+				//TODO: set the initial state
+				//InitialState = GetStateIndexFromText(strInitialState);
+				Debug.Assert(-1 != InitialState);
+
+				//next node is the states
+				XmlNode StatesNode = MessageNamesNode.NextSibling;
+				if (null == StatesNode)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+				if ("states" != StatesNode.Name)
+				{
+					Debug.Assert(false);
+					return false;
+				}
+
+				//the rest of the nodes are the states
+				for (XmlNode StateTableNode = StatesNode.FirstChild;
+					null != StateTableNode;
+					StateTableNode = StateTableNode.NextSibling)
+				{
+					if (!ReadXmlStateTable(StateTableNode))
+					{
+						Debug.Assert(false);
+						return false;
+					}
+				}
+			}
 			return true;
 		}
 
@@ -1096,6 +1095,7 @@ namespace StateMachineBuddy
 		/// <param name="strFilename">teh file to write out to</param>
 		public void WriteXml(Filename strFilename)
 		{
+#if !WINDOWS_UWP
 			//open the file, create it if it doesnt exist yet
 			XmlTextWriter rXMLFile = new XmlTextWriter(strFilename.File, null);
 			rXMLFile.Formatting = Formatting.Indented;
@@ -1185,6 +1185,9 @@ namespace StateMachineBuddy
 			// Close the file.
 			rXMLFile.Flush();
 			rXMLFile.Close();
+#else
+			throw new NotImplementedException();
+#endif
 		}
 
 		/// <summary>
@@ -1260,6 +1263,6 @@ namespace StateMachineBuddy
 			}
 		}
 
-		#endregion //File IO
+#endregion //File IO
 	}
 }
