@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateMachineBuddy.DesktopGL", "StateMachineBuddy.DesktopGL\StateMachineBuddy.DesktopGL.csproj", "{C3B7AAF8-7052-4898-902B-52F126EDF96A}"
 EndProject
@@ -83,14 +83,14 @@ Global
 		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Release|x64.Build.0 = Release|Any CPU
 		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Release|x86.ActiveCfg = Release|Any CPU
 		{19DA06E2-72B2-4B45-92D9-DC5CD396B884}.Release|x86.Build.0 = Release|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.ActiveCfg = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.Build.0 = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|ARM.ActiveCfg = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|ARM.Build.0 = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x64.ActiveCfg = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x64.Build.0 = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x86.ActiveCfg = AppStore|Any CPU
-		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x86.Build.0 = AppStore|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|ARM.ActiveCfg = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|ARM.Build.0 = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x64.ActiveCfg = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x64.Build.0 = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{B1731281-2433-4943-A507-E7E3F973B03A}.AppStore|x86.Build.0 = Release|Any CPU
 		{B1731281-2433-4943-A507-E7E3F973B03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1731281-2433-4943-A507-E7E3F973B03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1731281-2433-4943-A507-E7E3F973B03A}.Debug|ARM.ActiveCfg = Debug|Any CPU
