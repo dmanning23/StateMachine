@@ -19,7 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		StateMachineBuddy.nuspec = StateMachineBuddy.nuspec
 	EndProjectSection
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "StateMachineBuddy.SharedProject", "StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.shproj", "{F8D0EEDD-1A77-42B4-9537-E4739E7979C8}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.projitems*{c3b7aaf8-7052-4898-902b-52f126edf96a}*SharedItemsImports = 4
+		StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.projitems*{f8d0eedd-1a77-42b4-9537-e4739e7979c8}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		AppStore|Any CPU = AppStore|Any CPU
 		AppStore|ARM = AppStore|ARM
