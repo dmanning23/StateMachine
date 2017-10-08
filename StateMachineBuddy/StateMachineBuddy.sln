@@ -23,6 +23,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "StateMachineBuddy.SharedPro
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.projitems*{189535e3-a82f-4f0b-bb17-d358af64f8d8}*SharedItemsImports = 4
 		StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.projitems*{c3b7aaf8-7052-4898-902b-52f126edf96a}*SharedItemsImports = 4
 		StateMachineBuddy.SharedProject\StateMachineBuddy.SharedProject.projitems*{f8d0eedd-1a77-42b4-9537-e4739e7979c8}*SharedItemsImports = 13
 	EndGlobalSection

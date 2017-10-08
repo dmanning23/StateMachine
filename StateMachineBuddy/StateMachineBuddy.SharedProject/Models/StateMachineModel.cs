@@ -1,8 +1,7 @@
-﻿using System;
+﻿using FilenameBuddy;
 using System.Collections.Generic;
-using System.Text;
+using System.Xml;
 using XmlBuddy;
-using FilenameBuddy;
 
 namespace StateMachineBuddy.Models
 {
@@ -37,6 +36,116 @@ namespace StateMachineBuddy.Models
 
 		#region Methods
 
-		#endregion //Methods
+		public StateMachineModel(Filename file) : base("StateMachine", file)
+		{
+			StateNames = new List<string>();
+			MessageNames = new List<string>();
+			States = new List<StateTableModel>();
+		}
+
+		public StateMachineModel(Filename file, StateMachine stateMachine) : this(file)
+		{
+			Initial = stateMachine.GetStateName(stateMachine.InitialState);
+			for (var i = 0; i < stateMachine.NumStates; i++)
+			{
+				StateNames.Add(stateMachine.GetStateName(i));
+			}
+			for (var i = 0; i < stateMachine.NumMessages; i++)
+			{
+				MessageNames.Add(stateMachine.GetMessageName(i));
+			}
+
+			for (var i = 0; i < stateMachine.NumStates; i++)
+			{
+				States.Add(new StateTableModel(stateMachine, i));
+			}
+		}
+
+		public override void ParseXmlNode(XmlNode node)
+		{
+			//what is in this node?
+			var name = node.Name;
+			var value = node.InnerText;
+
+			switch (name)
+			{
+				case "initial":
+					{
+						Initial = value;
+					}
+					break;
+				case "stateNames":
+					{
+						ReadChildNodes(node, ParseStateNames);
+					}
+					break;
+				case "messageNames":
+					{
+						ReadChildNodes(node, ParseMessageNames);
+					}
+					break;
+				case "states":
+					{
+						ReadChildNodes(node, ParseStates);
+					}
+					break;
+				default:
+					{
+						NodeError(node);
+					}
+					break;
+			}
+		}
+
+		private void ParseStateNames(XmlNode node)
+		{
+			StateNames.Add(node.InnerText);
+		}
+
+		private void ParseMessageNames(XmlNode node)
+		{
+			MessageNames.Add(node.InnerText);
+		}
+
+		private void ParseStates(XmlNode node)
+		{
+			var stateTable = new StateTableModel();
+			XmlFileBuddy.ReadChildNodes(node, stateTable.ParseXmlNode);
+			States.Add(stateTable);
+		}
+
+#if !WINDOWS_UWP
+		public override void WriteXmlNodes(XmlTextWriter xmlWriter)
+		{
+			xmlWriter.WriteAttributeString("initial", Initial);
+
+			xmlWriter.WriteStartElement("stateNames");
+			foreach (var state in StateNames)
+			{
+				xmlWriter.WriteStartElement("state");
+				xmlWriter.WriteAttributeString("name", state);
+				xmlWriter.WriteEndElement();
+			}
+			xmlWriter.WriteEndElement();
+
+			xmlWriter.WriteStartElement("messageNames");
+			foreach (var message in MessageNames)
+			{
+				xmlWriter.WriteStartElement("message");
+				xmlWriter.WriteAttributeString("name", message);
+				xmlWriter.WriteEndElement();
+			}
+			xmlWriter.WriteEndElement();
+
+			xmlWriter.WriteStartElement("states");
+			foreach (var state in States)
+			{
+				state.WriteXmlNodes(xmlWriter);
+			}
+			xmlWriter.WriteEndElement();
+		}
+#endif
+
+#endregion //Methods
 	}
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Xml;
+using XmlBuddy;
 
 namespace StateMachineBuddy.Models
 {
 	/// <summary>
 	/// this object records the change from one state to another when the state machine receives a message
 	/// </summary>
-	public class StateChangeModel
-    {
+	public class StateChangeModel : XmlObject
+	{
 		#region Properties
 
 		/// <summary>
@@ -25,6 +24,52 @@ namespace StateMachineBuddy.Models
 
 		#region Methods
 
-		#endregion //Methods
+		public StateChangeModel()
+		{
+		}
+
+		public StateChangeModel(StateMachine stateMachine, int state, int message)
+		{
+			Message = stateMachine.GetMessageName(message);
+			State = stateMachine.GetStateName(state);
+		}
+
+		public override void ParseXmlNode(XmlNode node)
+		{
+			//what is in this node?
+			var name = node.Name;
+			var value = node.InnerText;
+
+			switch (name)
+			{
+				case "message":
+					{
+						Message = value;
+					}
+					break;
+				case "state":
+					{
+						State = value;
+					}
+					break;
+				default:
+					{
+						base.ParseXmlNode(node);
+					}
+					break;
+			}
+		}
+
+#if !WINDOWS_UWP
+		public override void WriteXmlNodes(XmlTextWriter xmlWriter)
+		{
+			xmlWriter.WriteStartElement("transition");
+			xmlWriter.WriteAttributeString("message", Message);
+			xmlWriter.WriteAttributeString("state", State);
+			xmlWriter.WriteEndElement();
+		}
+#endif
+
+#endregion //Methods
 	}
 }
