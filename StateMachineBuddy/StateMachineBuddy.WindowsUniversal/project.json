@@ -1,6 +1,6 @@
 ﻿{
   "dependencies": {
-    "FilenameBuddy": "1.0.3",
+    "FilenameBuddy": "1.0.6",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "MonoGame.Framework.WindowsUniversal": "3.5.1.1679",
     "XmlBuddy": "1.0.14"

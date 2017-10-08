@@ -73,7 +73,7 @@ namespace StateMachineBuddy
 		/// the message offset of this state machine. 
 		/// this is used so multiple state machines can use the same input queue.
 		/// </summary>
-		public int MessageOffset { get; private set; }
+		public int MessageOffset { get; set; }
 
 		/// <summary>
 		/// The current state of this machine
