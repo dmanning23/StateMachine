@@ -40,8 +40,13 @@ namespace StateMachineBuddy.Models
 			var name = node.Name;
 			var value = node.InnerText;
 
-			switch (name)
+			switch (name.ToLower())
 			{
+				case "type":
+					{
+						//Really skip these old ass nodes
+					}
+					break;
 				case "message":
 					{
 						Message = value;
