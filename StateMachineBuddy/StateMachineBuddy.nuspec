@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>StateMachineBuddy</id>
-		<version>1.0.7</version>
+		<version>1.0.10</version>
 		<title>StateMachineBuddy</title>
 		<authors>dmanning23</authors>
 		<owners>dmanning23</owners>
@@ -38,7 +38,7 @@
 			</group>
 
 			<group targetFramework="net451">
-				<dependency id="MonoGame.Framework.DesktopGL" version="3.5"/>
+				<dependency id="MonoGame.Framework.WindowsDX" version="3.5"/>
 				<dependency id="FilenameBuddy" version="1.0"/>
         <dependency id="XmlBuddy" version="1.0"/>
 			</group>
@@ -59,9 +59,9 @@
 		<file src="StateMachineBuddy.WindowsUniversal\bin\Release\StateMachineBuddy.WindowsUniversal.pdb" target="lib\uap10.0\StateMachineBuddy.WindowsUniversal.pdb" />
 		<file src="StateMachineBuddy.WindowsUniversal\bin\Release\StateMachineBuddy.WindowsUniversal.dll" target="lib\uap10.0\StateMachineBuddy.WindowsUniversal.dll" />
 
-		<!--DesktopGL-->
-		<file src="StateMachineBuddy.DesktopGL\bin\Release\StateMachineBuddy.DesktopGL.pdb" target="lib\net451\StateMachineBuddy.DesktopGL.pdb" />
-		<file src="StateMachineBuddy.DesktopGL\bin\Release\StateMachineBuddy.DesktopGL.dll" target="lib\net451\StateMachineBuddy.DesktopGL.dll" />
+		<!--WindowsDX-->
+		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.pdb" target="lib\net451\StateMachineBuddy.WindowsDX.pdb" />
+		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.dll" target="lib\net451\StateMachineBuddy.WindowsDX.dll" />
 
 	</files>
 </package>
