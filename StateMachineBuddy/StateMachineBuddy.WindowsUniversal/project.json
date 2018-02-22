@@ -1,9 +1,9 @@
 ﻿{
   "dependencies": {
-    "FilenameBuddy": "1.0.9",
+    "FilenameBuddy": "1.0.11",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
     "MonoGame.Framework.WindowsUniversal": "3.6.0.1625",
-    "XmlBuddy": "1.0.19"
+    "XmlBuddy": "1.0.20"
   },
   "frameworks": {
     "uap10.0.10240": {}
