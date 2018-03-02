@@ -682,11 +682,11 @@ namespace StateMachineBuddy
 
 		#region File IO
 
-		public void LoadXml(Filename file, ContentManager content)
+		public void LoadXml(Filename file, ContentManager xmlContent)
 		{
 			//Load the model
 			var stateMachineModel = new StateMachineModel(file);
-			stateMachineModel.ReadXmlFile(content);
+			stateMachineModel.ReadXmlFile(xmlContent);
 
 			//set all the state and message names
 			Set(stateMachineModel.StateNames.Count, stateMachineModel.MessageNames.Count, 0, 0);
@@ -706,11 +706,11 @@ namespace StateMachineBuddy
 			LoadStateTables(stateMachineModel);
 		}
 
-		public void AppendXml(Filename file, ContentManager content)
+		public void AppendXml(Filename file, ContentManager xmlContent)
 		{
 			//Load the model
 			var stateMachineModel = new StateMachineModel(file);
-			stateMachineModel.ReadXmlFile(content);
+			stateMachineModel.ReadXmlFile(xmlContent);
 
 			//read in and append all the state & message names
 			ReadNames(stateMachineModel.StateNames, stateMachineModel.MessageNames);
