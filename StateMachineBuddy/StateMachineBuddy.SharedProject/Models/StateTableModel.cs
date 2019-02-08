@@ -2,7 +2,7 @@
 using System.Xml;
 using XmlBuddy;
 
-namespace StateMachineBuddy.Models
+namespace StateMachineBuddy
 {
 	/// <summary>
 	/// this is a list of all the state changes for one state
@@ -14,12 +14,12 @@ namespace StateMachineBuddy.Models
 		/// <summary>
 		/// name of this state, must match one of the states in the state machine
 		/// </summary>
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// list of all the state changes for this state
 		/// </summary>
-		public List<StateChangeModel> Transitions { get; private set; }
+		public List<StateChangeModel> Transitions { get; set; }
 
 		#endregion //Properties
 
@@ -28,6 +28,11 @@ namespace StateMachineBuddy.Models
 		public StateTableModel()
 		{
 			Transitions = new List<StateChangeModel>();
+		}
+
+		public StateTableModel(string name) : this()
+		{
+			Name = name;
 		}
 
 		public StateTableModel(StateMachine stateMachine, int stateIndex) : this()
@@ -40,6 +45,19 @@ namespace StateMachineBuddy.Models
 				if (targetState != stateIndex)
 				{
 					Transitions.Add(new StateChangeModel(stateMachine, targetState, i));
+				}
+			}
+		}
+
+		public StateTableModel(State state, string stateName) : this()
+		{
+			Name = stateName;
+
+			foreach (var transition in state.StateChanges)
+			{
+				if (transition.Value != stateName)
+				{
+					Transitions.Add(new StateChangeModel(transition.Key, transition.Value));
 				}
 			}
 		}
@@ -60,6 +78,12 @@ namespace StateMachineBuddy.Models
 				case "name":
 					{
 						Name = value;
+					}
+					break;
+				case "transition":
+					{
+						var stateChange = new StateChangeModel(node.Attributes["message"].InnerText, node.Attributes["state"].InnerText);
+						Transitions.Add(stateChange);
 					}
 					break;
 				case "transitions":
@@ -85,12 +109,17 @@ namespace StateMachineBuddy.Models
 #if !WINDOWS_UWP
 		public override void WriteXmlNodes(XmlTextWriter xmlWriter)
 		{
-			xmlWriter.WriteStartElement("transitions");
+			xmlWriter.WriteStartElement("state");
 			xmlWriter.WriteAttributeString("name", Name);
+			xmlWriter.WriteStartElement("transitions");
 			foreach (var transition in Transitions)
 			{
-				transition.WriteXmlNodes(xmlWriter);
+				if (transition.State != Name)
+				{
+					transition.WriteXmlNodes(xmlWriter);
+				}
 			}
+			xmlWriter.WriteEndElement();
 			xmlWriter.WriteEndElement();
 		}
 #endif

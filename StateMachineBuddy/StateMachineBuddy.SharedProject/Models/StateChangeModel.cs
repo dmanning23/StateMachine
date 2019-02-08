@@ -1,7 +1,7 @@
 ﻿using System.Xml;
 using XmlBuddy;
 
-namespace StateMachineBuddy.Models
+namespace StateMachineBuddy
 {
 	/// <summary>
 	/// this object records the change from one state to another when the state machine receives a message
@@ -13,12 +13,12 @@ namespace StateMachineBuddy.Models
 		/// <summary>
 		/// message recieved, must match one of teh messages in the state machine
 		/// </summary>
-		public string Message { get; private set; }
+		public string Message { get; set; }
 
 		/// <summary>
 		/// target state, must match one of the states in the state machine
 		/// </summary>
-		public string State { get; private set; }
+		public string State { get; set; }
 
 		#endregion //Properties
 
@@ -26,6 +26,12 @@ namespace StateMachineBuddy.Models
 
 		public StateChangeModel()
 		{
+		}
+
+		public StateChangeModel(string message, string state)
+		{
+			Message = message;
+			State = state;
 		}
 
 		public StateChangeModel(StateMachine stateMachine, int state, int message)

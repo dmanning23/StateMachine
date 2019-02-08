@@ -1,11 +1,8 @@
 ﻿using FilenameBuddy;
 using Microsoft.Xna.Framework.Content;
-using StateMachineBuddy.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Xml;
 
 namespace StateMachineBuddy
 {
@@ -34,12 +31,12 @@ namespace StateMachineBuddy
 		/// <summary>
 		/// list of the state names
 		/// </summary>
-		private string[] _stateNames;
+		public string[] StateNames { get; private set; }
 
 		/// <summary>
 		/// list of the message names
 		/// </summary>
-		private string[] _messageNames;
+		public string[] MessageNames { get; private set; }
 
 		/// <summary>
 		/// All the state transitions for each state
@@ -92,7 +89,7 @@ namespace StateMachineBuddy
 		{
 			get
 			{
-				return _stateNames != null ? _stateNames.Length : 0;
+				return StateNames != null ? StateNames.Length : 0;
 			}
 		}
 
@@ -103,13 +100,13 @@ namespace StateMachineBuddy
 		{
 			get
 			{
-				return _messageNames != null ? _messageNames.Length : 0;
+				return MessageNames != null ? MessageNames.Length : 0;
 			}
 		}
 
 		public string CurrentStateText
 		{
-			get { return _stateNames[CurrentState]; }
+			get { return StateNames[CurrentState]; }
 		}
 
 		#endregion //Properties
@@ -125,8 +122,8 @@ namespace StateMachineBuddy
 			PrevState = 0;
 			CurrentState = 0;
 			MessageOffset = 0;
-			_stateNames = null;
-			_messageNames = null;
+			StateNames = null;
+			MessageNames = null;
 			_data = null;
 		}
 
@@ -147,8 +144,8 @@ namespace StateMachineBuddy
 			_data = new int[numStates, numMessages];
 
 			//create the correct number of names for states and messages
-			_stateNames = new string[numStates];
-			_messageNames = new string[numMessages];
+			StateNames = new string[numStates];
+			MessageNames = new string[numMessages];
 
 			//set the state transitions to defualt
 			for (int i = 0; i < numStates; i++)
@@ -256,9 +253,9 @@ namespace StateMachineBuddy
 		{
 			Debug.Assert(state >= 0);
 			Debug.Assert(state < NumStates);
-			Debug.Assert(null != _stateNames);
+			Debug.Assert(null != StateNames);
 
-			_stateNames[state] = stateName;
+			StateNames[state] = stateName;
 		}
 
 		/// <summary>
@@ -268,7 +265,7 @@ namespace StateMachineBuddy
 		/// <param name="strMessageName">the name to change the message to</param>
 		public void SetMessageName(int message, string messageName)
 		{
-			Debug.Assert(null != _messageNames);
+			Debug.Assert(null != MessageNames);
 
 			//adjust by the message offset
 			int adjustedMessage = message - MessageOffset;
@@ -276,7 +273,7 @@ namespace StateMachineBuddy
 			Debug.Assert(adjustedMessage >= 0);
 			Debug.Assert(adjustedMessage < NumMessages);
 
-			_messageNames[adjustedMessage] = messageName;
+			MessageNames[adjustedMessage] = messageName;
 		}
 
 		/// <summary>
@@ -317,7 +314,7 @@ namespace StateMachineBuddy
 			{
 				if (i < NumStates)
 				{
-					stateNames[i] = _stateNames[i];
+					stateNames[i] = StateNames[i];
 				}
 			}
 
@@ -327,13 +324,13 @@ namespace StateMachineBuddy
 			{
 				if (i < NumMessages)
 				{
-					messageNames[i] = _messageNames[i];
+					messageNames[i] = MessageNames[i];
 				}
 			}
 
 			//point to new data
-			_stateNames = stateNames;
-			_messageNames = messageNames;
+			StateNames = stateNames;
+			MessageNames = messageNames;
 			_data = data;
 		}
 
@@ -347,7 +344,7 @@ namespace StateMachineBuddy
 			Debug.Assert(state < NumStates);
 			Debug.Assert(NumStates > 0);
 			Debug.Assert(null != _data);
-			Debug.Assert(null != _stateNames);
+			Debug.Assert(null != StateNames);
 
 			if (NumStates == 1)
 			{
@@ -382,7 +379,7 @@ namespace StateMachineBuddy
 					}
 
 					//copy teh state name
-					tempStateNames[curState] = _stateNames[i];
+					tempStateNames[curState] = StateNames[i];
 
 					//copy the state name
 					curState++;
@@ -391,7 +388,7 @@ namespace StateMachineBuddy
 
 			//point to the new data
 			_data = data;
-			_stateNames = tempStateNames;
+			StateNames = tempStateNames;
 
 			//check if the initial state needs to change
 			if ((_initialState >= NumStates) || (_initialState == state))
@@ -407,7 +404,7 @@ namespace StateMachineBuddy
 		public void RemoveMessage(int message)
 		{
 			Debug.Assert(null != _data);
-			Debug.Assert(null != _messageNames);
+			Debug.Assert(null != MessageNames);
 			Debug.Assert(0 <= message);
 			Debug.Assert(message < NumMessages);
 			Debug.Assert(NumMessages > 0);
@@ -433,7 +430,7 @@ namespace StateMachineBuddy
 					if (message != j)
 					{
 						data[i, iCurMessage] = _data[i, j];
-						messageNames[iCurMessage] = _messageNames[j];
+						messageNames[iCurMessage] = MessageNames[j];
 						iCurMessage++;
 					}
 				}
@@ -441,7 +438,7 @@ namespace StateMachineBuddy
 
 			//point to the new data
 			_data = data;
-			_messageNames = messageNames;
+			MessageNames = messageNames;
 		}
 
 		#endregion Initialization
@@ -542,12 +539,12 @@ namespace StateMachineBuddy
 		/// <returns>int index of the state with that name, -1 if no state found</returns>
 		public int GetStateFromName(string stateName)
 		{
-			Debug.Assert(null != _stateNames);
+			Debug.Assert(null != StateNames);
 
 			//loop through messages to find the right one
 			for (int i = 0; i < NumStates; i++)
 			{
-				if (stateName == _stateNames[i])
+				if (stateName == StateNames[i])
 				{
 					return i;
 				}
@@ -563,12 +560,12 @@ namespace StateMachineBuddy
 		/// <returns>if of the message</returns>
 		public int GetMessageFromName(string messageName)
 		{
-			Debug.Assert(null != _messageNames);
+			Debug.Assert(null != MessageNames);
 
 			//loop through messages to find the right one
 			for (int i = 0; i < NumMessages; i++)
 			{
-				if (messageName == _messageNames[i])
+				if (messageName == MessageNames[i])
 				{
 					//adjust by the message offset
 					int adjustedMessage = i + MessageOffset;
@@ -609,9 +606,9 @@ namespace StateMachineBuddy
 		{
 			Debug.Assert(state >= 0);
 			Debug.Assert(state < NumStates);
-			Debug.Assert(null != _stateNames);
+			Debug.Assert(null != StateNames);
 
-			return _stateNames[state];
+			return StateNames[state];
 		}
 
 		/// <summary>
@@ -621,7 +618,7 @@ namespace StateMachineBuddy
 		/// <returns>given a message id, get the message name</returns>
 		public string GetMessageName(int message)
 		{
-			Debug.Assert(null != _messageNames);
+			Debug.Assert(null != MessageNames);
 
 			//adjust by the message offset
 			int adjustedMessage = message - MessageOffset;
@@ -629,7 +626,7 @@ namespace StateMachineBuddy
 			Debug.Assert(adjustedMessage >= 0);
 			Debug.Assert(adjustedMessage < NumMessages);
 
-			return _messageNames[adjustedMessage];
+			return MessageNames[adjustedMessage];
 		}
 
 		/// <summary>
@@ -650,7 +647,7 @@ namespace StateMachineBuddy
 
 			for (int i = 0; i < NumStates; i++)
 			{
-				if (_stateNames[i] != inst._stateNames[i])
+				if (StateNames[i] != inst.StateNames[i])
 				{
 					return false;
 				}
@@ -658,7 +655,7 @@ namespace StateMachineBuddy
 
 			for (int i = 0; i < NumMessages; i++)
 			{
-				if (_messageNames[i] != inst._messageNames[i])
+				if (MessageNames[i] != inst.MessageNames[i])
 				{
 					return false;
 				}
@@ -685,41 +682,45 @@ namespace StateMachineBuddy
 		public void LoadXml(Filename file, ContentManager xmlContent)
 		{
 			//Load the model
-			var stateMachineModel = new StateMachineModel(file);
-			stateMachineModel.ReadXmlFile(xmlContent);
-
-			//set all the state and message names
-			Set(stateMachineModel.StateNames.Count, stateMachineModel.MessageNames.Count, 0, 0);
-			for (int i = 0; i < stateMachineModel.StateNames.Count; i++)
+			using (var stateMachineModel = new StateMachineModel(file))
 			{
-				_stateNames[i] = stateMachineModel.StateNames[i];
-			}
-			for (int i = 0; i < stateMachineModel.MessageNames.Count; i++)
-			{
-				_messageNames[i] = stateMachineModel.MessageNames[i];
-			}
+				stateMachineModel.ReadXmlFile(xmlContent);
 
-			//set the initial state
-			InitialState = GetStateFromName(stateMachineModel.Initial);
+				//set all the state and message names
+				Set(stateMachineModel.StateNames.Count, stateMachineModel.MessageNames.Count, 0, 0);
+				for (int i = 0; i < stateMachineModel.StateNames.Count; i++)
+				{
+					StateNames[i] = stateMachineModel.StateNames[i];
+				}
+				for (int i = 0; i < stateMachineModel.MessageNames.Count; i++)
+				{
+					MessageNames[i] = stateMachineModel.MessageNames[i];
+				}
 
-			//load the state table & transitions
-			LoadStateTables(stateMachineModel);
+				//set the initial state
+				InitialState = GetStateFromName(stateMachineModel.Initial);
+
+				//load the state table & transitions
+				LoadStateTables(stateMachineModel);
+			}
 		}
 
 		public void AppendXml(Filename file, ContentManager xmlContent)
 		{
 			//Load the model
-			var stateMachineModel = new StateMachineModel(file);
-			stateMachineModel.ReadXmlFile(xmlContent);
+			using (var stateMachineModel = new StateMachineModel(file))
+			{
+				stateMachineModel.ReadXmlFile(xmlContent);
 
-			//read in and append all the state & message names
-			ReadNames(stateMachineModel.StateNames, stateMachineModel.MessageNames);
+				//read in and append all the state & message names
+				ReadNames(stateMachineModel.StateNames, stateMachineModel.MessageNames);
 
-			//TODO: set the initial state
-			//InitialState = GetStateIndexFromText(strInitialState);
+				//TODO: set the initial state
+				//InitialState = GetStateIndexFromText(strInitialState);
 
-			//load the state table & transitions
-			LoadStateTables(stateMachineModel);
+				//load the state table & transitions
+				LoadStateTables(stateMachineModel);
+			}
 		}
 
 		private void LoadStateTables(StateMachineModel stateMachineModel)
@@ -794,7 +795,7 @@ namespace StateMachineBuddy
 					var stateIndex = GetStateFromName(listStateNames[i]);
 					if (-1 == stateIndex)
 					{
-						_stateNames[nextBlankState] = listStateNames[i];
+						StateNames[nextBlankState] = listStateNames[i];
 						nextBlankState++;
 					}
 				}
@@ -810,7 +811,7 @@ namespace StateMachineBuddy
 					var messageIndex = GetMessageFromName(listMessageNames[i]);
 					if (-1 == messageIndex)
 					{
-						_messageNames[nextBlankMessage] = listMessageNames[i];
+						MessageNames[nextBlankMessage] = listMessageNames[i];
 						nextBlankMessage++;
 					}
 				}

@@ -8,15 +8,6 @@ namespace StateMachineBuddy
 	public class StateChangeEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public StateChangeEventArgs(int oldState, int newState)
-		{
-			OldState = oldState;
-			NewState = newState;
-		}
-
-		/// <summary>
 		/// The previous state
 		/// </summary>
 		public int OldState { get; set; }
@@ -25,5 +16,14 @@ namespace StateMachineBuddy
 		/// the new state we just changed to
 		/// </summary>
 		public int NewState { get; set; }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public StateChangeEventArgs(int oldState, int newState)
+		{
+			OldState = oldState;
+			NewState = newState;
+		}
 	}
 }
