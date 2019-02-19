@@ -19,6 +19,14 @@ namespace StateMachineBuddy
 			StateChanges = new Dictionary<string, string>();
 		}
 
+		public State(State state) : this()
+		{
+			foreach (var stateChange in state.StateChanges)
+			{
+				StateChanges.Add(stateChange.Key, stateChange.Value);
+			}
+		}
+
 		public void AddStateMachine(StateMachine stateMachine, string stateName)
 		{
 			//get the index of this state

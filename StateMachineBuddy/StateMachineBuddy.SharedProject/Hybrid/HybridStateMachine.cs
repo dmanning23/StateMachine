@@ -61,6 +61,24 @@ namespace StateMachineBuddy
 			States = new HashSet<string>();
 		}
 
+		public HybridStateMachine(HybridStateMachine stateMachine) : this()
+		{
+			//add all the state changes
+			foreach (var state in stateMachine.StateTable)
+			{
+				StateTable.Add(state.Key, new State(state.Value));
+			}
+
+			//add all the state names
+			AddStates(stateMachine.States);
+
+			//add all the message names
+			AddMessages(stateMachine.Messages);
+
+			//set the initial state
+			SetInitialState(stateMachine.InitialState);
+		}
+
 		/// <summary>
 		/// Set up the initial state of this thing
 		/// </summary>
@@ -122,7 +140,7 @@ namespace StateMachineBuddy
 			}
 		}
 
-		public void AddStates(List<string> states)
+		public void AddStates(IEnumerable<string> states)
 		{
 			//add all the states
 			foreach (var stateName in states)
@@ -140,7 +158,7 @@ namespace StateMachineBuddy
 			}
 		}
 
-		public void AddMessages(List<string> messages)
+		public void AddMessages(IEnumerable<string> messages)
 		{
 			//double check all messages
 			foreach (var messageName in messages)
@@ -250,10 +268,7 @@ namespace StateMachineBuddy
 			CurrentState = InitialState;
 
 			//Send the reset event instread of the state change event
-			if (ResetEvent != null)
-			{
-				ResetEvent(this, new HybridStateChangeEventArgs(PrevState, CurrentState));
-			}
+			ResetEvent?.Invoke(this, new HybridStateChangeEventArgs(PrevState, CurrentState));
 		}
 
 		/// <summary>
@@ -308,10 +323,7 @@ namespace StateMachineBuddy
 		/// <param name="nextState">the next state</param>
 		protected virtual void OnStateChange(string oldState, string nextState)
 		{
-			if (StateChangedEvent != null)
-			{
-				StateChangedEvent(this, new HybridStateChangeEventArgs(oldState, nextState));
-			}
+			StateChangedEvent?.Invoke(this, new HybridStateChangeEventArgs(oldState, nextState));
 		}
 
 		#endregion //Methods

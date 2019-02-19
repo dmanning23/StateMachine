@@ -361,5 +361,23 @@ namespace StateMachineBuddy.Tests
 
 			_states.CurrentState.ShouldBe("one");
 		}
+
+		[TestCase("five", "one", "six")]
+		[TestCase("five", "two", "seven")]
+		[TestCase("six", "one", "seven")]
+		[TestCase("six", "two", "eight")]
+		public void CloneStateMachine(string currentState, string message, string expectedNextState)
+		{
+			_states.SetStateMachine(_stateMachine);
+			_states.AddStateMachine(_stateModel);
+
+			var states2 = new HybridStateMachine(_states);
+
+			states2.ForceState(currentState);
+
+			states2.SendStateMessage(message);
+			states2.PrevState.ShouldBe(currentState);
+			states2.CurrentState.ShouldBe(expectedNextState);
+		}
 	}
 }
