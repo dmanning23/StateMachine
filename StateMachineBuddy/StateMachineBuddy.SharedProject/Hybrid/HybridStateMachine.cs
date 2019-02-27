@@ -202,7 +202,7 @@ namespace StateMachineBuddy
 			//Reset the initial state if necessary
 			if (stateModel.StateNames.Contains(CurrentState))
 			{
-				CurrentState = InitialState;
+				ForceState(InitialState);
 			}
 		}
 
