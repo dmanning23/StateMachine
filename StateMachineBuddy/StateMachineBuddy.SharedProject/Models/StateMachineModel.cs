@@ -1,5 +1,6 @@
 ﻿using FilenameBuddy;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using XmlBuddy;
 
@@ -71,7 +72,7 @@ namespace StateMachineBuddy
 			}
 		}
 
-		public StateMachineModel(Filename file, HybridStateMachine stateMachine) : this(file)
+		public StateMachineModel(Filename file, HybridStateMachine stateMachine, bool addAllMessages = false) : this(file)
 		{
 			Initial = stateMachine.InitialState;
 			foreach (var state in stateMachine.States)
@@ -85,7 +86,21 @@ namespace StateMachineBuddy
 
 			foreach (var stateTable in stateMachine.StateTable)
 			{
-				States.Add(new StateTableModel(stateTable.Value, stateTable.Key));
+				States.Add(new StateTableModel(stateTable.Value, stateTable.Key, addAllMessages));
+			}
+
+			if (addAllMessages)
+			{
+				foreach (var state in States)
+				{
+					foreach (var message in MessageNames)
+					{
+						if (!state.Transitions.Any(x => x.Message == message))
+						{
+							state.Transitions.Add(new StateChangeModel(message, state.Name));
+						}
+					}
+				}
 			}
 		}
 
@@ -187,6 +202,9 @@ namespace StateMachineBuddy
 			xmlWriter.WriteAttributeString("initial", Initial);
 
 			xmlWriter.WriteStartElement("states1");
+
+			StateNames = StateNames.OrderBy(x => x).ToList();
+
 			foreach (var state in StateNames)
 			{
 				xmlWriter.WriteStartElement("state");
@@ -196,6 +214,9 @@ namespace StateMachineBuddy
 			xmlWriter.WriteEndElement();
 
 			xmlWriter.WriteStartElement("messages");
+
+			MessageNames = MessageNames.OrderBy(x => x).ToList();
+
 			foreach (var message in MessageNames)
 			{
 				xmlWriter.WriteStartElement("message");
@@ -205,6 +226,9 @@ namespace StateMachineBuddy
 			xmlWriter.WriteEndElement();
 
 			xmlWriter.WriteStartElement("stateChanges");
+
+			States = States.OrderBy(x => x.Name).ToList();
+
 			foreach (var state in States)
 			{
 				state.WriteXmlNodes(xmlWriter);

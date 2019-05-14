@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using XmlBuddy;
 
@@ -20,6 +21,8 @@ namespace StateMachineBuddy
 		/// list of all the state changes for this state
 		/// </summary>
 		public List<StateChangeModel> Transitions { get; set; }
+
+		public bool AddAllMessages { get; set; }
 
 		#endregion //Properties
 
@@ -49,9 +52,10 @@ namespace StateMachineBuddy
 			}
 		}
 
-		public StateTableModel(State state, string stateName) : this()
+		public StateTableModel(State state, string stateName, bool addAllMessages = false) : this()
 		{
 			Name = stateName;
+			AddAllMessages = addAllMessages;
 
 			foreach (var transition in state.StateChanges)
 			{
@@ -112,9 +116,13 @@ namespace StateMachineBuddy
 			xmlWriter.WriteStartElement("state");
 			xmlWriter.WriteAttributeString("name", Name);
 			xmlWriter.WriteStartElement("transitions");
+
+			//sort the transitions
+			Transitions = Transitions.OrderBy(x => x.Message).ToList();
+
 			foreach (var transition in Transitions)
 			{
-				if (transition.State != Name)
+				if (transition.State != Name || AddAllMessages)
 				{
 					transition.WriteXmlNodes(xmlWriter);
 				}
