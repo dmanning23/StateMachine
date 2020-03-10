@@ -286,14 +286,18 @@ namespace StateMachineBuddy
 				//Does the current state listen for this message?
 				if (state.StateChanges.ContainsKey(message))
 				{
-					//Set the previous state
-					PrevState = CurrentState;
+					var nextState = state.StateChanges[message];
+					if (nextState != CurrentState)
+					{
+						//Set the previous state
+						PrevState = CurrentState;
 
-					//Set the current state
-					CurrentState = state.StateChanges[message];
+						//Set the current state
+						CurrentState = nextState;
 
-					//Fire off the state change event
-					OnStateChange(PrevState, CurrentState);
+						//Fire off the state change event
+						OnStateChange(PrevState, CurrentState);
+					}
 				}
 			}
 		}
