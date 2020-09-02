@@ -276,7 +276,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="message">message to send to the state machine, 
 		/// should be offset by the message offset of this dude</param>
-		public virtual void SendStateMessage(string message)
+		public virtual bool SendStateMessage(string message)
 		{
 			//get the current state
 			if (StateTable.ContainsKey(CurrentState))
@@ -297,9 +297,13 @@ namespace StateMachineBuddy
 
 						//Fire off the state change event
 						OnStateChange(PrevState, CurrentState);
+
+						return true;
 					}
 				}
 			}
+
+			return false;
 		}
 
 		/// <summary>

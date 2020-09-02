@@ -9,7 +9,7 @@ namespace StateMachineBuddy
 	/// <summary>
 	/// Stores all the states, messages, and state transitions
 	/// </summary>
-	public class StateMachine
+	public class StateMachine : IStateMachine<int>
 	{
 		#region Members
 
@@ -450,7 +450,7 @@ namespace StateMachineBuddy
 		/// </summary>
 		/// <param name="message">message to send to the state machine, 
 		/// should be offset by the message offset of this dude</param>
-		public virtual void SendStateMessage(int message)
+		public virtual bool SendStateMessage(int message)
 		{
 			Debug.Assert(null != _data);
 
@@ -474,7 +474,11 @@ namespace StateMachineBuddy
 
 				//fire off a message
 				OnStateChange(PrevState, CurrentState);
+
+				return true;
 			}
+
+			return false;
 		}
 
 		/// <summary>
@@ -818,13 +822,11 @@ namespace StateMachineBuddy
 			}
 		}
 
-#if !WINDOWS_UWP
 		public void WriteXml(Filename file)
 		{
 			var model = new StateMachineModel(file, this);
 			model.WriteXml();
 		}
-#endif
 
 		#endregion //File IO
 	}

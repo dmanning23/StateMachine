@@ -32,7 +32,7 @@ namespace StateMachineBuddy
 		void RemoveState(int state);
 		void ResetToInitialState();
 		void Resize(int numStates, int numMessages);
-		void SendStateMessage(int message);
+		bool SendStateMessage(int message);
 		void Set(int numStates, int numMessages, int initialState = 0, int offset = 0);
 		void Set(Type statesEnum, Type messagesEnum, int initialState = 0, int offset = 0);
 		void SetEntry(int state, int message, int nextState);

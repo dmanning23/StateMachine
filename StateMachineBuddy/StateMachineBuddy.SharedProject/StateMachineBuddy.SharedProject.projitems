@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Enum\EnumStateMachine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hybrid\HybridStateChangeEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hybrid\State.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IStateMachine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StateChangeModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StateMachineModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\StateTableModel.cs" />
