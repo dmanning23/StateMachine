@@ -2,16 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>StateMachineBuddy</id>
-		<version>2.0.21</version>
+		<version>4.0.0</version>
 		<title>StateMachineBuddy</title>
 		<authors>dmanning23</authors>
-		<owners>dmanning23</owners>
 		<projectUrl>https://github.com/dmanning23/StateMachineBuddy</projectUrl>
 		<licenseUrl>https://github.com/dmanning23/StateMachineBuddy/blob/master/LICENSE.txt</licenseUrl>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>A finite state machine for Monogame</description>
-		<releaseNotes />
-		<copyright>Copyright 2016</copyright>
 		<tags>android, ios, windows universal, monogame, xamarin</tags>
 		<dependencies>
 
@@ -29,7 +25,7 @@
 				<dependency id="XmlBuddy" version="2.0"/>
 			</group>
 
-			<group targetFramework="net451">
+			<group targetFramework="net452">
 				<dependency id="MonoGame.Framework.WindowsDX" version="3.7"/>
 				<dependency id="FilenameBuddy" version="2.0"/>
 				<dependency id="XmlBuddy" version="2.0"/>
@@ -48,8 +44,8 @@
 		<file src="StateMachineBuddy.iOS\bin\Release\StateMachineBuddy.iOS.dll" target="lib\Xamarin.iOS10\StateMachineBuddy.iOS.dll" />
 
 		<!--WindowsDX-->
-		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.pdb" target="lib\net451\StateMachineBuddy.WindowsDX.pdb" />
-		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.dll" target="lib\net451\StateMachineBuddy.WindowsDX.dll" />
+		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.pdb" target="lib\net452\StateMachineBuddy.WindowsDX.pdb" />
+		<file src="StateMachineBuddy.WindowsDX\bin\Release\StateMachineBuddy.WindowsDX.dll" target="lib\net452\StateMachineBuddy.WindowsDX.dll" />
 
 	</files>
 </package>
