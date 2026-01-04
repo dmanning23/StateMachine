@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <PackageId>StateMachineBuddy</PackageId>
-    <Version>5.0.0</Version>
+    <Version>5.0.1</Version>
     <Title>StateMachineBuddy</Title>
     <Authors>dmanning23</Authors>
     <description>A finite state machine for Monogame</description>
