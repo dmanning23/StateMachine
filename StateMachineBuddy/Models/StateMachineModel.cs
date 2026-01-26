@@ -21,17 +21,17 @@ namespace StateMachineBuddy
         /// <summary>
         /// list of all the states in the state machine
         /// </summary>
-        public List<string> StateNames { get; set; }
+        public List<string> StateNames { get; set; } = new List<string>();
 
         /// <summary>
         /// list of all the messages in the state machine
         /// </summary>
-        public List<string> MessageNames { get; set; }
+        public List<string> MessageNames { get; set; } = new List<string>();
 
         /// <summary>
         /// all the state transition data for this state machine
         /// </summary>
-        public List<StateTableModel> States { get; set; }
+        public List<StateModel> States { get; set; } = new List<StateModel>();
 
         #endregion //Properties
 
@@ -39,68 +39,27 @@ namespace StateMachineBuddy
 
         public StateMachineModel() : base("StateMachine")
         {
-            Setup();
         }
 
         public StateMachineModel(Filename file) : base("StateMachine", file)
         {
-            Setup();
         }
 
-        private void Setup()
-        {
-            StateNames = new List<string>();
-            MessageNames = new List<string>();
-            States = new List<StateTableModel>();
-        }
-
-        public StateMachineModel(Filename file, StateMachine stateMachine) : this(file)
-        {
-            Initial = stateMachine.GetStateName(stateMachine.InitialState);
-            for (var i = 0; i < stateMachine.NumStates; i++)
-            {
-                StateNames.Add(stateMachine.GetStateName(i));
-            }
-            for (var i = 0; i < stateMachine.NumMessages; i++)
-            {
-                MessageNames.Add(stateMachine.GetMessageName(i));
-            }
-
-            for (var i = 0; i < stateMachine.NumStates; i++)
-            {
-                States.Add(new StateTableModel(stateMachine, i));
-            }
-        }
-
-        public StateMachineModel(Filename file, HybridStateMachine stateMachine, bool addAllMessages = false) : this(file)
+        public StateMachineModel(Filename file, StringStateMachine stateMachine) : this(file)
         {
             Initial = stateMachine.InitialState;
-            foreach (var state in stateMachine.States)
+            foreach (var stateName in stateMachine.States)
             {
-                StateNames.Add(state);
+                StateNames.Add(stateName);
             }
-            foreach (var message in stateMachine.Messages)
+            foreach (var messageName in stateMachine.Messages)
             {
-                MessageNames.Add(message);
-            }
-
-            foreach (var stateTable in stateMachine.StateTable)
-            {
-                States.Add(new StateTableModel(stateTable.Value, stateTable.Key, addAllMessages));
+                MessageNames.Add(messageName);
             }
 
-            if (addAllMessages)
+            foreach (var state in stateMachine.StateTable)
             {
-                foreach (var state in States)
-                {
-                    foreach (var message in MessageNames)
-                    {
-                        if (!state.Transitions.Any(x => x.Message == message))
-                        {
-                            state.Transitions.Add(new StateChangeModel(message, state.Name));
-                        }
-                    }
-                }
+                States.Add(new StateModel(state.Key, state.Value));
             }
         }
 
@@ -112,17 +71,6 @@ namespace StateMachineBuddy
 
             switch (name)
             {
-                case "Asset":
-                    {
-                        //skip these old ass nodes
-                        XmlFileBuddy.ReadChildNodes(node, ParseXmlNode);
-                    }
-                    break;
-                case "Type":
-                    {
-                        //Really skip these old ass nodes
-                    }
-                    break;
                 case "initial":
                     {
                         Initial = value;
@@ -163,7 +111,7 @@ namespace StateMachineBuddy
 
         private void ParseStateChanges(XmlNode node)
         {
-            var stateTable = new StateTableModel();
+            var stateTable = new StateModel();
             XmlFileBuddy.ReadChildNodes(node, stateTable.ParseXmlNode);
             States.Add(stateTable);
         }
@@ -174,8 +122,6 @@ namespace StateMachineBuddy
 
             xmlWriter.WriteStartElement("states");
 
-            StateNames = StateNames.OrderBy(x => x).ToList();
-
             foreach (var state in StateNames)
             {
                 xmlWriter.WriteStartElement("state");
@@ -185,8 +131,6 @@ namespace StateMachineBuddy
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteStartElement("messages");
-
-            MessageNames = MessageNames.OrderBy(x => x).ToList();
 
             foreach (var message in MessageNames)
             {

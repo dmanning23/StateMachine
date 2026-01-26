@@ -8,7 +8,7 @@ namespace StateMachineBuddy
     /// <summary>
     /// this is a list of all the state changes for one state
     /// </summary>
-    public class StateTableModel : XmlObject
+    public class StateModel : XmlObject
     {
         #region Properties
 
@@ -20,46 +20,23 @@ namespace StateMachineBuddy
         /// <summary>
         /// list of all the state changes for this state
         /// </summary>
-        public List<StateChangeModel> Transitions { get; set; }
-
-        public bool AddAllMessages { get; set; }
+        public List<StateChangeModel> Transitions { get; set; } = new List<StateChangeModel>();
 
         #endregion //Properties
 
         #region Methods
 
-        public StateTableModel()
+        public StateModel()
         {
-            Transitions = new List<StateChangeModel>();
         }
 
-        public StateTableModel(string name) : this()
+        public StateModel(string name, State state)
         {
             Name = name;
-        }
-
-        public StateTableModel(StateMachine stateMachine, int stateIndex) : this()
-        {
-            Name = stateMachine.GetStateName(stateIndex);
-
-            for (var i = 0; i < stateMachine.NumMessages; i++)
-            {
-                var targetState = stateMachine.GetEntry(stateIndex, i);
-                if (targetState != stateIndex)
-                {
-                    Transitions.Add(new StateChangeModel(stateMachine, targetState, i));
-                }
-            }
-        }
-
-        public StateTableModel(State state, string stateName, bool addAllMessages = false) : this()
-        {
-            Name = stateName;
-            AddAllMessages = addAllMessages;
 
             foreach (var transition in state.StateChanges)
             {
-                if (transition.Value != stateName)
+                if (transition.Value != Name)
                 {
                     Transitions.Add(new StateChangeModel(transition.Key, transition.Value));
                 }
@@ -74,20 +51,9 @@ namespace StateMachineBuddy
 
             switch (name.ToLower())
             {
-                case "type":
-                    {
-                        //Really skip these old ass nodes
-                    }
-                    break;
                 case "name":
                     {
                         Name = value;
-                    }
-                    break;
-                case "transition":
-                    {
-                        var stateChange = new StateChangeModel(node.Attributes["message"].InnerText, node.Attributes["state"].InnerText);
-                        Transitions.Add(stateChange);
                     }
                     break;
                 case "transitions":
@@ -121,7 +87,7 @@ namespace StateMachineBuddy
 
             foreach (var transition in Transitions)
             {
-                if (transition.State != Name || AddAllMessages)
+                if (transition.TargetState != Name)
                 {
                     transition.WriteXmlNodes(xmlWriter);
                 }

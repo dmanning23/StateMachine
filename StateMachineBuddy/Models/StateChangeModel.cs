@@ -18,7 +18,7 @@ namespace StateMachineBuddy
         /// <summary>
         /// target state, must match one of the states in the state machine
         /// </summary>
-        public string State { get; set; }
+        public string TargetState { get; set; }
 
         #endregion //Properties
 
@@ -28,16 +28,10 @@ namespace StateMachineBuddy
         {
         }
 
-        public StateChangeModel(string message, string state)
+        public StateChangeModel(string message, string targetState)
         {
             Message = message;
-            State = state;
-        }
-
-        public StateChangeModel(StateMachine stateMachine, int state, int message)
-        {
-            Message = stateMachine.GetMessageName(message);
-            State = stateMachine.GetStateName(state);
+            TargetState = targetState;
         }
 
         public override void ParseXmlNode(XmlNode node)
@@ -48,11 +42,6 @@ namespace StateMachineBuddy
 
             switch (name.ToLower())
             {
-                case "type":
-                    {
-                        //Really skip these old ass nodes
-                    }
-                    break;
                 case "message":
                     {
                         Message = value;
@@ -60,7 +49,7 @@ namespace StateMachineBuddy
                     break;
                 case "state":
                     {
-                        State = value;
+                        TargetState = value;
                     }
                     break;
                 default:
@@ -75,7 +64,7 @@ namespace StateMachineBuddy
         {
             xmlWriter.WriteStartElement("transition");
             xmlWriter.WriteAttributeString("message", Message);
-            xmlWriter.WriteAttributeString("state", State);
+            xmlWriter.WriteAttributeString("state", TargetState);
             xmlWriter.WriteEndElement();
         }
 
