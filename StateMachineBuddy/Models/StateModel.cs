@@ -26,10 +26,18 @@ namespace StateMachineBuddy
 
         #region Methods
 
+        /// <summary>
+        /// Initializes a new instance of the StateModel class.
+        /// </summary>
         public StateModel()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the StateModel class from a state name and state object.
+        /// </summary>
+        /// <param name="name">The name of the state.</param>
+        /// <param name="state">The state containing transition data.</param>
         public StateModel(string name, State state)
         {
             Name = name;
@@ -43,6 +51,7 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <inheritdoc/>
         public override void ParseXmlNode(XmlNode node)
         {
             //what is in this node?
@@ -69,6 +78,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Parses a state transition node from XML.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
         private void ParseStateTransitions(XmlNode node)
         {
             var stateChange = new StateChangeModel();
@@ -76,6 +89,7 @@ namespace StateMachineBuddy
             Transitions.Add(stateChange);
         }
 
+        /// <inheritdoc/>
         public override void WriteXmlNodes(XmlTextWriter xmlWriter)
         {
             xmlWriter.WriteStartElement("state");

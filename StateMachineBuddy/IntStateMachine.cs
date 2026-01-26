@@ -67,6 +67,9 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Gets the name of the initial state.
+        /// </summary>
         public string InitialStateName => GetStateName(InitialState);
 
         /// <summary>
@@ -101,6 +104,9 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Gets the name of the current state.
+        /// </summary>
         public string CurrentStateName
         {
             get { return StateNames[CurrentState]; }
@@ -124,11 +130,11 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Set all the stuff of the state machine
+        /// Initializes the state machine with the specified number of states and messages.
         /// </summary>
-        /// <param name="numStates">number of states to put in the state machine</param>
-        /// <param name="numMessages">number of messages in the machine</param>
-        /// <param name="initialState">the machine to start in</param>
+        /// <param name="numStates">The number of states in the state machine.</param>
+        /// <param name="numMessages">The number of messages in the state machine.</param>
+        /// <param name="initialState">The initial state index.</param>
         public void Set(int numStates, int numMessages, int initialState = 0)
         {
             //grab these variables
@@ -155,6 +161,12 @@ namespace StateMachineBuddy
             CurrentState = _initialState;
         }
 
+        /// <summary>
+        /// Initializes the state machine using enum types for states and messages.
+        /// </summary>
+        /// <param name="statesEnum">The enum type defining the states.</param>
+        /// <param name="messagesEnum">The enum type defining the messages.</param>
+        /// <param name="initialState">The initial state index.</param>
         public void Set(Type statesEnum, Type messagesEnum, int initialState = 0)
         {
             //set the state machine up
@@ -201,10 +213,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Given an enum type, set the matching state names to the text of the enum
+        /// Sets state or message names from an enum type.
         /// </summary>
-        /// <param name="states">an enum type</param>
-        /// <param name="isStates">true to set state names, false to set message anmes</param>
+        /// <param name="states">The enum type to get names from.</param>
+        /// <param name="isStates">True to set state names, false to set message names.</param>
         public void SetNames(Type states, bool isStates)
         {
             //get the names and values
@@ -246,10 +258,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// change the name of a message
+        /// Sets the name of a message.
         /// </summary>
-        /// <param name="message">id of the message to change the name of</param>
-        /// <param name="strMessageName">the name to change the message to</param>
+        /// <param name="message">The index of the message to rename.</param>
+        /// <param name="messageName">The new name for the message.</param>
         public void SetMessageName(int message, string messageName)
         {
             Debug.Assert(null != MessageNames);
@@ -429,10 +441,10 @@ namespace StateMachineBuddy
         #region Important Methods
 
         /// <summary>
-        /// method to send a message
+        /// Sends a message to the state machine, potentially triggering a state transition.
         /// </summary>
-        /// <param name="message">message to send to the state machine, 
-        /// should be offset by the message offset of this dude</param>
+        /// <param name="message">The message index to send.</param>
+        /// <returns>True if the state changed, false otherwise.</returns>
         public virtual bool SendStateMessage(int message)
         {
             Debug.Assert(null != _data);
@@ -537,10 +549,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Get the index of a message from the message name
+        /// Gets the index of a message from its name.
         /// </summary>
-        /// <param name="messageName">name of teh message to get the id for</param>
-        /// <returns>if of the message</returns>
+        /// <param name="messageName">The name of the message.</param>
+        /// <returns>The index of the message, or -1 if not found.</returns>
         public int GetMessageFromName(string messageName)
         {
             Debug.Assert(null != MessageNames);
@@ -558,11 +570,11 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Get a state transition
+        /// Gets the target state for a given state and message combination.
         /// </summary>
-        /// <param name="state">the beginning state</param>
-        /// <param name="iMessage">the message to send to that state</param>
-        /// <returns>int: the id of the target state when the specified message is sent to the specified state</returns>
+        /// <param name="state">The source state index.</param>
+        /// <param name="message">The message index.</param>
+        /// <returns>The target state index for the transition.</returns>
         public int GetEntry(int state, int message)
         {
             Debug.Assert(null != _data);
@@ -575,10 +587,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Get the name of a state
+        /// Gets the name of a state.
         /// </summary>
-        /// <param name="state">teh id of the state to get the name of</param>
-        /// <returns>get a state name </returns>
+        /// <param name="state">The state index.</param>
+        /// <returns>The name of the state.</returns>
         public string GetStateName(int state)
         {
             Debug.Assert(state >= 0);
@@ -603,11 +615,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// check if this is the same as another state machine
-        /// todo: isn't this doing it wrong?  override isequals or whatever
+        /// Compares this state machine with another for equality.
         /// </summary>
-        /// <param name="inst">thing to compare to</param>
-        /// <returns>whether not the same thing</returns>
+        /// <param name="inst">The state machine to compare with.</param>
+        /// <returns>True if the state machines are equal, false otherwise.</returns>
         public bool Compare(IntStateMachine inst)
         {
             //compare two state machines
@@ -652,6 +663,11 @@ namespace StateMachineBuddy
 
         #region File IO
 
+        /// <summary>
+        /// Loads the state machine configuration from an XML file.
+        /// </summary>
+        /// <param name="file">The path to the XML file.</param>
+        /// <param name="xmlContent">The content manager for loading the XML.</param>
         public void LoadXml(Filename file, ContentManager xmlContent)
         {
             //Load the model
@@ -663,6 +679,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Loads the state machine from a model object.
+        /// </summary>
+        /// <param name="stateMachineModel">The model containing state machine data.</param>
         private void LoadStateMachine(StateMachineModel stateMachineModel)
         {
             //set all the state and message names
@@ -683,6 +703,10 @@ namespace StateMachineBuddy
             LoadStateTables(stateMachineModel);
         }
 
+        /// <summary>
+        /// Loads all state tables from the model.
+        /// </summary>
+        /// <param name="stateMachineModel">The model containing state data.</param>
         private void LoadStateTables(StateMachineModel stateMachineModel)
         {
             foreach (var stateTable in stateMachineModel.States)
@@ -691,6 +715,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Loads a single state table from a state model.
+        /// </summary>
+        /// <param name="stateTableModel">The state model to load.</param>
         private void LoadStateTable(StateModel stateTableModel)
         {
             var stateIndex = GetStateFromName(stateTableModel.Name);

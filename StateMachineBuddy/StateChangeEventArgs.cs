@@ -18,8 +18,10 @@ namespace StateMachineBuddy
         public T NewState { get; set; }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the StateChangeEventArgs class.
         /// </summary>
+        /// <param name="oldState">The previous state before the transition.</param>
+        /// <param name="newState">The new state after the transition.</param>
         public StateChangeEventArgs(T oldState, T newState)
         {
             OldState = oldState;

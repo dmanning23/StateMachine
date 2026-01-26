@@ -37,14 +37,26 @@ namespace StateMachineBuddy
 
         #region Methods
 
+        /// <summary>
+        /// Initializes a new instance of the StateMachineModel class.
+        /// </summary>
         public StateMachineModel() : base("StateMachine")
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the StateMachineModel class with a file path.
+        /// </summary>
+        /// <param name="file">The path to the XML file.</param>
         public StateMachineModel(Filename file) : base("StateMachine", file)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the StateMachineModel class from an existing state machine.
+        /// </summary>
+        /// <param name="file">The path to save the XML file.</param>
+        /// <param name="stateMachine">The state machine to serialize.</param>
         public StateMachineModel(Filename file, StringStateMachine stateMachine) : this(file)
         {
             Initial = stateMachine.InitialState;
@@ -63,6 +75,7 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <inheritdoc/>
         public override void ParseXmlNode(XmlNode node)
         {
             //what is in this node?
@@ -99,16 +112,28 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Parses a state node from XML.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
         private void ParseStates(XmlNode node)
         {
             StateNames.Add(node.Attributes["name"].InnerText);
         }
 
+        /// <summary>
+        /// Parses a message node from XML.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
         private void ParseMessages(XmlNode node)
         {
             MessageNames.Add(node.Attributes["name"].InnerText);
         }
 
+        /// <summary>
+        /// Parses a state changes node from XML.
+        /// </summary>
+        /// <param name="node">The XML node to parse.</param>
         private void ParseStateChanges(XmlNode node)
         {
             var stateTable = new StateModel();
@@ -116,6 +141,7 @@ namespace StateMachineBuddy
             States.Add(stateTable);
         }
 
+        /// <inheritdoc/>
         public override void WriteXmlNodes(XmlTextWriter xmlWriter)
         {
             xmlWriter.WriteAttributeString("initial", Initial);

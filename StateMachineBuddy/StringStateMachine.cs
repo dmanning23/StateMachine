@@ -6,6 +6,9 @@ using Microsoft.Xna.Framework.Content;
 
 namespace StateMachineBuddy
 {
+    /// <summary>
+    /// A flexible state machine implementation using string-based states and messages.
+    /// </summary>
     public class StringStateMachine
     {
         #region Properties
@@ -56,10 +59,17 @@ namespace StateMachineBuddy
 
         #region Initialization
 
+        /// <summary>
+        /// Initializes a new instance of the StringStateMachine class.
+        /// </summary>
         public StringStateMachine()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the StringStateMachine class by copying another state machine.
+        /// </summary>
+        /// <param name="stateMachine">The state machine to copy.</param>
         public StringStateMachine(StringStateMachine stateMachine)
         {
             //add all the state changes
@@ -79,9 +89,9 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// Set up the initial state of this thing
+        /// Sets the initial state of the state machine.
         /// </summary>
-        /// <param name="initialState"></param>
+        /// <param name="initialState">The name of the initial state.</param>
         public void SetInitialState(string initialState)
         {
             if (States.Contains(initialState))
@@ -92,6 +102,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Adds multiple states to the state machine.
+        /// </summary>
+        /// <param name="states">The collection of state names to add.</param>
         public void AddStates(IEnumerable<string> states)
         {
             //add all the states
@@ -110,6 +124,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Adds multiple messages to the state machine.
+        /// </summary>
+        /// <param name="messages">The collection of message names to add.</param>
         public void AddMessages(IEnumerable<string> messages)
         {
             //double check all messages
@@ -122,6 +140,12 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Initializes the state machine using enum types for states and messages.
+        /// </summary>
+        /// <param name="statesEnum">The enum type defining the states.</param>
+        /// <param name="messagesEnum">The enum type defining the messages.</param>
+        /// <param name="initialState">The name of the initial state.</param>
         public void AddStateMachine(Type statesEnum, Type messagesEnum, string initialState)
         {
             AddStates(statesEnum);
@@ -131,11 +155,19 @@ namespace StateMachineBuddy
             SetInitialState(initialState);
         }
 
+        /// <summary>
+        /// Adds states from an enum type.
+        /// </summary>
+        /// <param name="statesEnum">The enum type defining the states.</param>
         public void AddStates(Type statesEnum)
         {
             AddStates(Enum.GetNames(statesEnum).ToList());
         }
 
+        /// <summary>
+        /// Adds messages from an enum type.
+        /// </summary>
+        /// <param name="messagesEnum">The enum type defining the messages.</param>
         public void AddMessages(Type messagesEnum)
         {
             AddMessages(Enum.GetNames(messagesEnum).ToList());
@@ -186,10 +218,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// method to send a message
+        /// Sends a message to the state machine, potentially triggering a state transition.
         /// </summary>
-        /// <param name="message">message to send to the state machine, 
-        /// should be offset by the message offset of this dude</param>
+        /// <param name="message">The message to send.</param>
+        /// <returns>True if the state changed, false otherwise.</returns>
         public virtual bool SendStateMessage(string message)
         {
             //get the current state
@@ -252,6 +284,11 @@ namespace StateMachineBuddy
 
         #region File IO
 
+        /// <summary>
+        /// Loads the state machine configuration from an XML file.
+        /// </summary>
+        /// <param name="file">The path to the XML file.</param>
+        /// <param name="xmlContent">The content manager for loading the XML.</param>
         public void LoadXml(Filename file, ContentManager xmlContent)
         {
             //Load the model
@@ -263,6 +300,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Loads the state machine from a model object.
+        /// </summary>
+        /// <param name="stateMachineModel">The model containing state machine data.</param>
         public void LoadStateMachine(StateMachineModel stateMachineModel)
         {
             AddStates(stateMachineModel.StateNames);

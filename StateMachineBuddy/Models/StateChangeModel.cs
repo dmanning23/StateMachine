@@ -11,12 +11,12 @@ namespace StateMachineBuddy
         #region Properties
 
         /// <summary>
-        /// message recieved, must match one of teh messages in the state machine
+        /// Gets or sets the message that triggers this transition.
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        /// target state, must match one of the states in the state machine
+        /// Gets or sets the target state after the transition.
         /// </summary>
         public string TargetState { get; set; }
 
@@ -24,16 +24,25 @@ namespace StateMachineBuddy
 
         #region Methods
 
+        /// <summary>
+        /// Initializes a new instance of the StateChangeModel class.
+        /// </summary>
         public StateChangeModel()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the StateChangeModel class with the specified message and target state.
+        /// </summary>
+        /// <param name="message">The message that triggers this transition.</param>
+        /// <param name="targetState">The target state after the transition.</param>
         public StateChangeModel(string message, string targetState)
         {
             Message = message;
             TargetState = targetState;
         }
 
+        /// <inheritdoc/>
         public override void ParseXmlNode(XmlNode node)
         {
             //what is in this node?
@@ -60,6 +69,7 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <inheritdoc/>
         public override void WriteXmlNodes(XmlTextWriter xmlWriter)
         {
             xmlWriter.WriteStartElement("transition");
