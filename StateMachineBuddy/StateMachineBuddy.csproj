@@ -1,20 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
+    <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <PackageId>StateMachineBuddy</PackageId>
-    <Version>5.0.2</Version>
+    <Version>5.0.3</Version>
     <Title>StateMachineBuddy</Title>
     <Authors>dmanning23</Authors>
-    <description>A finite state machine for Monogame</description>
-    <PackageProjectUrl>https://github.com/dmanning23/StateMachine</PackageProjectUrl>
+    <description>A finite state machine library for .NET and MonoGame projects. Define states and messages, configure transitions between states, send messages to trigger transitions, and subscribe to events when state changes occur.</description>
+    <PackageProjectUrl>https://github.com/dmanning23/StateMachineBuddy</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/dmanning23/StateMachine</RepositoryUrl>
+    <RepositoryUrl>https://github.com/dmanning23/StateMachineBuddy</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>monogame</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.*">
       <PrivateAssets>All</PrivateAssets>
