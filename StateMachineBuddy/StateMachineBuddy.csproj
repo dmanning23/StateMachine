@@ -2,7 +2,7 @@
     <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <PackageId>StateMachineBuddy</PackageId>
-    <Version>5.0.4</Version>
+    <Version>5.0.5</Version>
     <Title>StateMachineBuddy</Title>
     <Authors>dmanning23</Authors>
     <description>A finite state machine library for .NET and MonoGame projects. Define states and messages, configure transitions between states, send messages to trigger transitions, and subscribe to events when state changes occur.</description>
