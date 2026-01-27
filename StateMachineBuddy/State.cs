@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace StateMachineBuddy
 {
@@ -36,6 +38,44 @@ namespace StateMachineBuddy
             foreach (var stateChange in state.StateChanges)
             {
                 StateChanges.Add(stateChange.Key, stateChange.Value);
+            }
+        }
+
+        public void AddStateMachine(StateModel stateTable, StringStateMachine stateMachine, string stateName)
+        {
+            foreach (var change in stateTable.Transitions)
+            {
+                if (!stateMachine.Messages.Contains(change.Message))
+                {
+                    throw new Exception($"State machine doesn't have message {change.Message}");
+                }
+                if (!stateMachine.States.Contains(change.TargetState))
+                {
+                    throw new Exception($"State machine doesn't have state {change.TargetState}");
+                }
+
+                if (stateName != change.TargetState)
+                {
+                    StateChanges[change.Message] = change.TargetState;
+                }
+            }
+        }
+
+        public void RemoveStateMachine(StateMachineModel stateModel)
+        {
+            //remove the messages
+            foreach (var message in stateModel.MessageNames)
+            {
+                StateChanges.Remove(message);
+            }
+
+            //remove the targetstates
+            foreach (var state in stateModel.StateNames)
+            {
+                foreach (var targetState in StateChanges.Where(x => x.Value == state).ToList())
+                {
+                    StateChanges.Remove(targetState.Key);
+                }
             }
         }
 

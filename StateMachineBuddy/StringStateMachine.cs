@@ -201,6 +201,65 @@ namespace StateMachineBuddy
             StateTable[state].StateChanges[message] = nextState;
         }
 
+        /// <summary>
+		/// Add all the states and state transitions from a StateMachine object
+		/// </summary>
+		/// <param name="stateModel"></param>
+		public void AddStateMachine(StateMachineModel stateModel)
+        {
+            AddMessages(stateModel.MessageNames);
+            AddStates(stateModel.StateNames);
+
+            //add all the state transitions
+            foreach (var stateTableModel in stateModel.States)
+            {
+                //find the matching state
+                if (!StateTable.ContainsKey(stateTableModel.Name))
+                {
+                    throw new Exception($"State machine is missing state definitions for {stateTableModel.Name}");
+                }
+
+                var state = StateTable[stateTableModel.Name];
+                state.AddStateMachine(stateTableModel, this, stateTableModel.Name);
+            }
+        }
+
+        /// <summary>
+		/// Remove all the states and state transitions from a StateMachine object
+		/// </summary>
+		/// <param name="stateMachine"></param>
+		public void RemoveStateMachine(StateMachineModel stateModel)
+        {
+            //remove all the messages that have been added
+            foreach (var messageName in stateModel.MessageNames)
+            {
+                Messages.Remove(messageName);
+            }
+
+            foreach (var stateName in stateModel.StateNames)
+            {
+                States.Remove(stateName);
+            }
+
+            //remove all the states in the state machine that is being removed
+            foreach (var stateName in stateModel.StateNames)
+            {
+                StateTable.Remove(stateName);
+            }
+
+            //clean up all the state transitions that were changed
+            foreach (var state in StateTable)
+            {
+                state.Value.RemoveStateMachine(stateModel);
+            }
+
+            //Reset the initial state if necessary
+            if (stateModel.StateNames.Contains(CurrentState))
+            {
+                ForceState(InitialState);
+            }
+        }
+
         #endregion //Initialization
 
         #region Methods
