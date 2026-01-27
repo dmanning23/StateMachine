@@ -202,10 +202,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-		/// Add all the states and state transitions from a StateMachine object
-		/// </summary>
-		/// <param name="stateModel"></param>
-		public void AddStateMachine(StateMachineModel stateModel)
+        /// Adds all states, messages, and transitions from a StateMachineModel.
+        /// </summary>
+        /// <param name="stateModel">The state machine model to add.</param>
+        public void AddStateMachine(StateMachineModel stateModel)
         {
             AddMessages(stateModel.MessageNames);
             AddStates(stateModel.StateNames);
@@ -225,10 +225,10 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-		/// Remove all the states and state transitions from a StateMachine object
-		/// </summary>
-		/// <param name="stateMachine"></param>
-		public void RemoveStateMachine(StateMachineModel stateModel)
+        /// Removes all states, messages, and transitions defined in the specified model.
+        /// </summary>
+        /// <param name="stateModel">The state machine model to remove.</param>
+        public void RemoveStateMachine(StateMachineModel stateModel)
         {
             //remove all the messages that have been added
             foreach (var messageName in stateModel.MessageNames)
@@ -265,7 +265,7 @@ namespace StateMachineBuddy
         #region Methods
 
         /// <summary>
-        /// This function sets the thing to its initial state.
+        /// Resets the state machine to its initial state and fires the ResetEvent.
         /// </summary>
         public void ResetToInitialState()
         {

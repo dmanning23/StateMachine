@@ -509,7 +509,7 @@ namespace StateMachineBuddy
         }
 
         /// <summary>
-        /// This function sets the thing to its initial state.
+        /// Resets the state machine to its initial state and fires the ResetEvent.
         /// </summary>
         public void ResetToInitialState()
         {

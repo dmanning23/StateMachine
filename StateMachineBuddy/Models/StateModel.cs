@@ -6,7 +6,7 @@ using XmlBuddy;
 namespace StateMachineBuddy
 {
     /// <summary>
-    /// this is a list of all the state changes for one state
+    /// Represents a state and its transitions in the serializable state machine model.
     /// </summary>
     public class StateModel : XmlObject
     {

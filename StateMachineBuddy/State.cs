@@ -41,6 +41,12 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Adds transitions from a state model to this state.
+        /// </summary>
+        /// <param name="stateTable">The state model containing transitions to add.</param>
+        /// <param name="stateMachine">The parent state machine for validation.</param>
+        /// <param name="stateName">The name of this state (used to filter self-transitions).</param>
         public void AddStateMachine(StateModel stateTable, StringStateMachine stateMachine, string stateName)
         {
             foreach (var change in stateTable.Transitions)
@@ -61,6 +67,10 @@ namespace StateMachineBuddy
             }
         }
 
+        /// <summary>
+        /// Removes transitions that reference messages or states from the specified model.
+        /// </summary>
+        /// <param name="stateModel">The state machine model whose messages and states should be removed.</param>
         public void RemoveStateMachine(StateMachineModel stateModel)
         {
             //remove the messages

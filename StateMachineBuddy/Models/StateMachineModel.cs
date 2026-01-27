@@ -7,7 +7,7 @@ using XmlBuddy;
 namespace StateMachineBuddy
 {
     /// <summary>
-    /// this is all the data for a state machine
+    /// Represents the serializable data model for a state machine, used for XML persistence.
     /// </summary>
     public class StateMachineModel : XmlFileBuddy
     {

@@ -4,7 +4,7 @@ using XmlBuddy;
 namespace StateMachineBuddy
 {
     /// <summary>
-    /// this object records the change from one state to another when the state machine receives a message
+    /// Represents a state transition triggered by a message in the serializable state machine model.
     /// </summary>
     public class StateChangeModel : XmlObject
     {
